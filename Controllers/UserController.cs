@@ -31,7 +31,7 @@ namespace GardenCenter.Controllers
           }
 
           var users = await _context.Users.ToListAsync();
-          var roles = await _context.Roles.ToListAsync();
+          var roles = await _context.Roles!.ToListAsync();
 
           foreach (var u in users.ToList())
           {
@@ -61,11 +61,11 @@ namespace GardenCenter.Controllers
         public async Task<ActionResult<IEnumerable<User>>> GetUserAdmin(bool admin = true)
         {
           var users = await _context.Users.ToListAsync();
-          var roles = await _context.Roles.ToListAsync();
+          var roles = await _context.Roles!.ToListAsync();
 
           foreach (var u in users.ToList())
           {
-            if (admin != u.Roles.Admin)
+            if (admin != u.Roles!.Admin)
             {
                 users.Remove(u);
             }
@@ -78,11 +78,11 @@ namespace GardenCenter.Controllers
         public async Task<ActionResult<IEnumerable<User>>> GetUserEmployee(bool employee = false)
         {
           var users = await _context.Users.ToListAsync();
-          var roles = await _context.Roles.ToListAsync();
+          var roles = await _context.Roles!.ToListAsync();
 
           foreach (var u in users.ToList())
           {
-            if (employee != u.Roles.Employee)
+            if (employee != u.Roles!.Employee)
             {
                 users.Remove(u);
             }
@@ -100,7 +100,7 @@ namespace GardenCenter.Controllers
               return NotFound();
           }
             var user = await _context.Users.FindAsync(id);
-            var roles = await _context.Roles.ToListAsync();
+            var roles = await _context.Roles!.ToListAsync();
 
             if (user == null)
             {
@@ -136,7 +136,7 @@ namespace GardenCenter.Controllers
                 return NotFound("ID in query does not match user being altered");
             }
 
-            if (user.Password.Length >= 8)
+            if (user.Password!.Length >= 8)
             {
                 validPassword = true;
             } else
@@ -144,7 +144,7 @@ namespace GardenCenter.Controllers
                 return BadRequest("Password must have 8 or more characters");    
             }
 
-            if (emailRegex.IsMatch(user.Email))
+            if (emailRegex.IsMatch(user.Email!))
             {
                 validEmail = true;
             } else
@@ -183,7 +183,7 @@ namespace GardenCenter.Controllers
             }
 
             var users = await _context.Users.ToListAsync();
-            var roles = await _context.Roles.ToListAsync();
+            var roles = await _context.Roles!.ToListAsync();
             bool validEmail = false;
             bool validPassword = false;
             Regex emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
@@ -195,7 +195,7 @@ namespace GardenCenter.Controllers
                 }
             }
 
-            if (user.Password.Length >= 8)
+            if (user.Password!.Length >= 8)
             {
                 validPassword = true;
             } else
@@ -203,7 +203,7 @@ namespace GardenCenter.Controllers
                 return BadRequest("Password must have 8 or more characters");    
             }
 
-            if (emailRegex.IsMatch(user.Email))
+            if (emailRegex.IsMatch(user.Email!))
             {
                 validEmail = true;
             } else

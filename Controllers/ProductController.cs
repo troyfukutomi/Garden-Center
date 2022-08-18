@@ -118,24 +118,6 @@ namespace GardenCenter.Controllers
             }
 
             return BadRequest("Product is invalid, try again");
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(id))
-                {
-                    return NotFound("No products with that ID exist. Try Again");
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return Ok();
         }
 
         // POST: api/Product

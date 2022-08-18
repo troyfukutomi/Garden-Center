@@ -49,11 +49,11 @@ namespace GardenCenter.Controllers
                     {
                         orders.Remove(o);
                     }
-                if (productId != 0 && productId > 0 && productId != o.Items.ProductId)
+                if (productId != 0 && productId > 0 && productId != o.Items!.ProductId)
                     {
                         orders.Remove(o);
                     }
-                if (quantity != 0 && quantity > 0 && quantity != o.Items.Quantity)
+                if (quantity != 0 && quantity > 0 && quantity != o.Items!.Quantity)
                     {
                         orders.Remove(o);
                     }
@@ -107,7 +107,7 @@ namespace GardenCenter.Controllers
                 return NotFound("No orders with that Id exist. Try Again"); 
             } 
 
-            if (order.Items.Quantity !<= 0)
+            if (order.Items!.Quantity !<= 0)
             {
                 return BadRequest("Quantity must be a positive number.");
             } 
@@ -141,7 +141,7 @@ namespace GardenCenter.Controllers
             }
 
             // Check that date is valid 
-            if (dateRegex.IsMatch(order.Date))
+            if (dateRegex.IsMatch(order.Date!))
             {
                 validDate = true;
             } else
@@ -191,7 +191,7 @@ namespace GardenCenter.Controllers
             Regex dateRegex = new Regex(@"^\d{4}-((0[1-9])|(1[012]))-((0[1-9]|[12]\d)|3[01])$");
             Regex totalRegex = new Regex(@"^[0-9]{0,}\.[0-9]{2}$");
         
-            if (order.Items.Quantity !<= 0)
+            if (order.Items!.Quantity !<= 0)
           {
                 return BadRequest("Quantity must be a positive number.");
           } 
@@ -224,7 +224,7 @@ namespace GardenCenter.Controllers
           }
 
         // Check that date is valid 
-          if (dateRegex.IsMatch(order.Date))
+          if (dateRegex.IsMatch(order.Date!))
           {
                 validDate = true;
           } else

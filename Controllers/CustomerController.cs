@@ -44,19 +44,19 @@ namespace GardenCenter.Controllers
                 {
                     customers.Remove(c);
                 }
-            if (city != null && city != c.Address.City)
+            if (city != null && city != c.Address!.City)
                 {
                     customers.Remove(c);
                 }
-            if (state != null && state != c.Address.State)
+            if (state != null && state != c.Address!.State)
                 {
                     customers.Remove(c);
                 }
-            if (zipcode != null && zipcode != c.Address.Zipcode)
+            if (zipcode != null && zipcode != c.Address!.Zipcode)
                 {
                     customers.Remove(c);
                 }
-            if (street != null && street != c.Address.Street)
+            if (street != null && street != c.Address!.Street)
                 {
                     customers.Remove(c);
                 }
@@ -112,7 +112,7 @@ namespace GardenCenter.Controllers
                 }
             }
 
-            if (emailRegex.IsMatch(customer.Email))
+            if (emailRegex.IsMatch(customer.Email!))
             {
                 validEmail = true;
             } else 
@@ -120,7 +120,7 @@ namespace GardenCenter.Controllers
                 return BadRequest("Email must be in proper email format");
             }
 
-            if (zipcodeRegex.IsMatch(customer.Address.Zipcode))
+            if (zipcodeRegex.IsMatch(customer.Address!.Zipcode!))
             {
                 validZip = true;
             } else
@@ -128,7 +128,7 @@ namespace GardenCenter.Controllers
                 return BadRequest("Zipcode must have 5 digits or 9 digits. xxxxx or xxxxx-xxxx");
             }
 
-            if (stateregex.IsMatch(customer.Address.State))
+            if (stateregex.IsMatch(customer.Address!.State!))
             {
                 validState = true;
             } else
@@ -175,7 +175,7 @@ namespace GardenCenter.Controllers
                 }
             }
 
-            if (emailRegex.IsMatch(customer.Email))
+            if (emailRegex.IsMatch(customer.Email!))
             {
                 validEmail = true;
             } else 
@@ -183,7 +183,7 @@ namespace GardenCenter.Controllers
                 return BadRequest("Email must be in proper email format");
             }
 
-            if (zipcodeRegex.IsMatch(customer.Address.Zipcode))
+            if (zipcodeRegex.IsMatch(customer.Address!.Zipcode!))
             {
                 validZip = true;
             } else
@@ -191,7 +191,7 @@ namespace GardenCenter.Controllers
                 return BadRequest("Zipcode must have 5 digits or 9 digits");
             }
 
-            if (stateregex.IsMatch(customer.Address.State))
+            if (stateregex.IsMatch(customer.Address!.State!))
             {
                 validState = true;
             } else
