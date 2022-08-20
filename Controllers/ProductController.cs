@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GardenCenter.Models;
-// using GardenCenter.Services;
+using GardenCenter.Validation;
 
 namespace GardenCenter.Controllers
 {
@@ -21,6 +21,7 @@ namespace GardenCenter.Controllers
         {
             _context = context;
         }
+        // public void ProductValidation(){}
 
         // private readonly ProductService productService;
     [HttpGet]
@@ -31,33 +32,10 @@ namespace GardenCenter.Controllers
             return NotFound();
         }
 
+        ProductValidation productValidation = new ProductValidation(_context);
         var products = await _context.Products.ToListAsync();
 
-        foreach (var p in products.ToList())
-        {
-            if (sku != null && sku != p.Sku)
-            {
-                products.Remove(p);
-            }
-            if (type != null && type != p.Type)
-            {
-                products.Remove(p);
-            }
-            if (name != null && name != p.Name)
-            {
-                products.Remove(p);
-            }
-            if (manufacturer != null && manufacturer != p.Manufacturer)
-            {
-                products.Remove(p);
-            }
-            if (price != 0 && price > 0 && price != p.Price)
-            {
-                products.Remove(p);
-            }
-        }
-
-        return products;
+        return productValidation.getProducts(sku, type, name, manufacturer, price, products);
     }
 
         // GET: api/Product/5
@@ -90,27 +68,29 @@ namespace GardenCenter.Controllers
 
             _context.Entry(product).State = EntityState.Modified;
 
+            ProductValidation productValidation = new ProductValidation(_context);
             var products = await _context.Products.ToListAsync();
-            bool validPrice = false;
+            bool uniqueSku = productValidation.uniqueSku(product, products);
+            bool validPrice = productValidation.priceIsProperFormat(product.Price);
+            bool matchingIds = productValidation.matchingIds(id, product);
             Regex priceRegex = new Regex(@"^[0-9]{0,}\.[0-9]{2}$");
 
-            foreach (var p in products)
+            if (!matchingIds)
             {
-                if (p.Sku == product.Sku && p.Id != product.Id)
-                {
-                    return Conflict("Sku has already been taken, use another sku number");
-                }
+                return BadRequest("ID in query does not match order being altered");
+            }
+
+            if (!uniqueSku)
+            {
+                return Conflict("Sku has already been taken, use another sku number");
             }
             
-            if (priceRegex.IsMatch(product.Price.ToString()))
-            {
-                validPrice = true;
-            } else
+            if (!validPrice)
             {
                 return BadRequest("Price must have 2 decimal places");
             }
 
-            if (validPrice)
+            if (validPrice &&  uniqueSku && matchingIds)
             {
                 _context.Entry(product).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
@@ -130,26 +110,23 @@ namespace GardenCenter.Controllers
               return Problem("Entity set 'DatabaseContext.Products'  is null.");
           }
 
+            ProductValidation productValidation = new ProductValidation(_context);
             var products = await _context.Products.ToListAsync();
-            bool validPrice = false;
+            bool uniqueSku = productValidation.uniqueSku(product, products);
+            bool validPrice = productValidation.priceIsProperFormat(product.Price);
             Regex priceRegex = new Regex(@"^[0-9]{0,}\.[0-9]{2}$");
-            foreach (var p in products)
-            {
-                if (p.Sku == product.Sku)
-                {
-                    return Conflict("Sku has already been taken, use another sku number");
-                }
-            }
 
-            if (priceRegex.IsMatch(product.Price.ToString()))
+            if (!uniqueSku)
             {
-                validPrice = true;
-            } else
+                return Conflict("Sku has already been taken, use another sku number");
+            }
+            
+            if (!validPrice)
             {
                 return BadRequest("Price must have 2 decimal places");
             }
 
-            if (validPrice)
+            if (validPrice && uniqueSku)
             {
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
@@ -170,18 +147,13 @@ namespace GardenCenter.Controllers
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
-                return NotFound();
+                return NotFound("No Product with this ID exists");
             }
 
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool ProductExists(int id)
-        {
-            return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

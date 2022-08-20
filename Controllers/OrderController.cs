@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GardenCenter.Models;
+using GardenCenter.Validation;
 
 namespace GardenCenter.Controllers
 {
@@ -21,6 +22,7 @@ namespace GardenCenter.Controllers
             _context = context;
         }
 
+        // public void OrderValidation(){}
         // GET: api/Order
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders(int customerId, string? date, decimal orderTotal, int productId, int quantity)
@@ -30,37 +32,12 @@ namespace GardenCenter.Controllers
               return NotFound();
           }
 
+            OrderValidation orderValidation = new OrderValidation(_context);
             var orders = await _context.Orders.ToListAsync();
-            // var customers = await _context.Customers.ToListAsync();
             var items = await _context.Items.ToListAsync();
-            // var products = await _context.Products.ToListAsync();
 
-            foreach (var o in orders.ToList())
-            {
-                if (customerId != 0 && customerId > 0 && customerId != o.CustomerId)
-                    {
-                        orders.Remove(o);
-                    }
-                if (date != null && date != o.Date)
-                    {
-                        orders.Remove(o);
-                    }
-                if (orderTotal != 0 && orderTotal > 0 && orderTotal != o.OrderTotal)
-                    {
-                        orders.Remove(o);
-                    }
-                if (productId != 0 && productId > 0 && productId != o.Items!.ProductId)
-                    {
-                        orders.Remove(o);
-                    }
-                if (quantity != 0 && quantity > 0 && quantity != o.Items!.Quantity)
-                    {
-                        orders.Remove(o);
-                    }
+            return orderValidation.getOrders(customerId, date, orderTotal, productId, quantity, orders);
 
-            }
-
-            return orders;
         }
 
         // GET: api/Order/5
@@ -92,47 +69,35 @@ namespace GardenCenter.Controllers
                 return BadRequest("ID in query does not match order being altered");
             }
 
+            OrderValidation orderValidation = new OrderValidation(_context);
+            ProductValidation productValidation = new ProductValidation(_context);
+            CustomerValidation customerValidation = new CustomerValidation(_context);
             var customers = await _context.Customers.ToListAsync();
             var items = await _context.Items.ToListAsync();
             var products = await _context.Products.ToListAsync();
-            bool customerExists = false;
-            bool productExists = false;
-            bool validDate = false;
-            bool validTotal = false;
+            bool matchingIds = orderValidation.matchingIds(id, order);
+            bool orderExists = orderValidation.orderExists(id);
+            bool customerExists = customerValidation.customerExists(order.CustomerId);
+            bool productExists = productValidation.productExists(order.Items!.ProductId);
+            bool validDate = orderValidation.validDate(order.Date!);
+            bool validTotal = orderValidation.validTotal(order.OrderTotal);
+            bool validQuantity = orderValidation.validQuantity(order.Items.Quantity);
             Regex dateRegex = new Regex(@"^\d{4}-((0[1-9])|(1[012]))-((0[1-9]|[12]\d)|3[01])$");
             Regex totalRegex = new Regex(@"^[0-9]{0,}\.[0-9]{2}$");
 
-            if (!OrderExists(id))
+            if (!matchingIds)
+            {
+                return BadRequest("ID in query does not match order being altered");
+            }
+
+            if (!orderExists)
             {
                 return NotFound("No orders with that Id exist. Try Again"); 
             } 
-
-            if (order.Items!.Quantity !<= 0)
-            {
-                return BadRequest("Quantity must be a positive number.");
-            } 
-
-            // Check customer exists in database
-            foreach (var c in customers.ToList())
-            {
-                if (order.CustomerId == c.Id)
-                {
-                    customerExists = true;
-                }
-            } 
-
+            
             if (!customerExists)
             {
                 return BadRequest("Customer does not exist in database");
-            }
-
-            //Check product exists in database
-            foreach (var p in products)
-            {
-                if (order.Items.ProductId == p.Id)
-                {
-                    productExists = true;
-                }
             }
 
             if(!productExists)
@@ -141,24 +106,23 @@ namespace GardenCenter.Controllers
             }
 
             // Check that date is valid 
-            if (dateRegex.IsMatch(order.Date!))
-            {
-                validDate = true;
-            } else
+            if (!validDate)
             {
                 return BadRequest("Date does not match yyyy-MM-dd format");
-            }
+            } 
 
             // Check the decimal is 2 places 
-            if (totalRegex.IsMatch(order.OrderTotal.ToString()))
-            {
-                validTotal = true;
-            } else
+            if (!validTotal)
             {
                 return BadRequest("Order total must have 2 decimal places");
             }
 
-           if (customerExists && productExists && validDate && validTotal)
+            if (!validQuantity)
+            {
+                return BadRequest("Quantity must be a positive number.");
+            } 
+
+           if (matchingIds && orderExists && customerExists && productExists && validDate && validTotal && validQuantity)
            {
                 _context.ChangeTracker.Clear();
                 _context.Entry(order).State = EntityState.Modified;
@@ -171,6 +135,14 @@ namespace GardenCenter.Controllers
 
         // POST: api/Order
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // 
+        // 
+        // 
+        // REFACTOR POST/DELETE FOR ORDERS AND ALL FOR USERS THERN REFACTOR DONE!!!!!!!!!
+        // 
+        // 
+        // 
+        // 
         [HttpPost]
         public async Task<ActionResult<Order>> PostOrder(Order order)
         {
@@ -179,8 +151,6 @@ namespace GardenCenter.Controllers
               return Problem("Entity set 'DatabaseContext.Orders'  is null.");
           }
 
-            // _context.Orders.Add(order);
-            // await _context.SaveChangesAsync();
             var customers = await _context.Customers.ToListAsync();
             var items = await _context.Items.ToListAsync();
             var products = await _context.Products.ToListAsync();
@@ -270,11 +240,6 @@ namespace GardenCenter.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool OrderExists(int id)
-        {
-            return (_context.Orders?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

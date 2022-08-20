@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GardenCenter.Models;
+using GardenCenter.Validation;
 
 namespace GardenCenter.Controllers
 {
@@ -20,64 +21,37 @@ namespace GardenCenter.Controllers
         {
             _context = context;
         }
+        // public void CustomerValidation(){}
 
         // GET: api/Customer
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers(string? name, string? email, string? city, string? state, string? zipcode, string? street)
         {
-          if (_context.Customers == null)
-          {
-              return NotFound();
-          }
+            if (_context.Customers == null)
+            {
+                return NotFound();
+            }
+
+            CustomerValidation customerValidation = new CustomerValidation(_context);
             // addresses is not directly used here but is required, without it  
             // all customers returned after a get request will have null addresses
             var addresses = await _context.Addresses.ToListAsync();
             var customers = await _context.Customers.ToListAsync(); 
             
-          foreach (var c in customers.ToList())
-          {
-            if (name != null && name != c.Name)
-                {
-                    customers.Remove(c);  
-                }
-            if (email != null && email != c.Email)
-                {
-                    customers.Remove(c);
-                }
-            if (city != null && city != c.Address!.City)
-                {
-                    customers.Remove(c);
-                }
-            if (state != null && state != c.Address!.State)
-                {
-                    customers.Remove(c);
-                }
-            if (zipcode != null && zipcode != c.Address!.Zipcode)
-                {
-                    customers.Remove(c);
-                }
-            if (street != null && street != c.Address!.Street)
-                {
-                    customers.Remove(c);
-                }
-            }
-            
-            return customers;
+            return customerValidation.getCustomers(name, email, city, state, zipcode, street, customers);
         }
 
         // GET: api/Customer/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Customer>> GetCustomer(long id)
         {
-          if (_context.Customers == null)
-          {
-              return NotFound();
-          }
+            if (_context.Customers == null)
+            {
+                return NotFound();
+            }
             var customer = await _context.Customers.FindAsync(id);
             var addresses = await _context.Addresses.ToListAsync();
-            // int customerId = (int)id;
-            // var address = await _context.Addresses.FindAsync(customerId);
-            // address = customer.Address;
+            
             if (customer == null)
             {
                 return NotFound();
@@ -91,52 +65,49 @@ namespace GardenCenter.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCustomer(long id, Customer customer)
         {
-            if (id != customer.Id)
-            {
-                return BadRequest("ID in query does not match customer being altered");
-            }
-
             var customers = await _context.Customers.ToListAsync();
-            bool validState = false;
-            bool validEmail = false;
-            bool validZip = false;
+            CustomerValidation customerValidation = new CustomerValidation(_context);
             Regex stateregex = new Regex(@"^(?-i:A[LKSZRAEP]|C[AOT]|D[EC]|F[LM]|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[ARW]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY])$");
             Regex emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
             Regex zipcodeRegex = new Regex(@"^[0-9]{5}(?:-[0-9]{4})?$");
+            bool matchingIds = customerValidation.matchingIds(id, customer);
+            bool uniqueEmail = customerValidation.emailIsUnique(customer,customers);
+            bool validEmail = customerValidation.emailIsProperFormat(customer.Email!);
+            bool validState = customerValidation.stateIsProperFormat(customer.Address!.State!);
+            bool validZip = customerValidation.zipcodeIsProperFormat(customer.Address!.Zipcode!);
+            bool customerExists = customerValidation.customerExists(id);
 
-            foreach (var c in customers)
+            if (!customerExists)
             {
-                if (c.Email == customer.Email && c.Id != customer.Id)
-                {
-                    return Conflict("Email has already been taken, choose another email.");
-                }
+                return NotFound("No orders with that Id exist. Try Again"); 
+            } 
+
+            if (!matchingIds)
+            {
+                return BadRequest("ID in query does not match order being altered");
             }
 
-            if (emailRegex.IsMatch(customer.Email!))
+            if (!uniqueEmail)
             {
-                validEmail = true;
-            } else 
+                return Conflict("Email has already been taken, choose another email.");
+            }
+
+            if (!validEmail)
             {
                 return BadRequest("Email must be in proper email format");
-            }
+            } 
 
-            if (zipcodeRegex.IsMatch(customer.Address!.Zipcode!))
-            {
-                validZip = true;
-            } else
-            {
-                return BadRequest("Zipcode must have 5 digits or 9 digits. xxxxx or xxxxx-xxxx");
-            }
-
-            if (stateregex.IsMatch(customer.Address!.State!))
-            {
-                validState = true;
-            } else
+            if (!validState)
             {
                 return BadRequest("Must be a valid US state abbreviation");
-            }
+            } 
 
-            if (validEmail && validState && validZip)
+            if (!validZip)
+            {
+                return BadRequest("Zipcode must have 5 digits or 9 digits. xxxxx or xxxxx-xxxx");
+            } 
+
+            if (validEmail && validState && validZip && uniqueEmail && matchingIds)
             {
                 _context.ChangeTracker.Clear();
                 _context.Entry(customer).State = EntityState.Modified;
@@ -157,49 +128,38 @@ namespace GardenCenter.Controllers
             {
                 return Problem("Entity set 'DatabaseContext.Customers'  is null.");
             }
-
+            CustomerValidation customerValidation = new CustomerValidation(_context);
             var customers = await _context.Customers.ToListAsync();
             var addresses = await _context.Addresses.ToListAsync();
-            bool validState = false;
-            bool validZip = false;
-            bool validEmail = false;
+            bool uniqueEmail = customerValidation.emailIsUnique(customer,customers);
+            bool validEmail = customerValidation.emailIsProperFormat(customer.Email!);
+            bool validState = customerValidation.stateIsProperFormat(customer.Address!.State!);
+            bool validZip = customerValidation.zipcodeIsProperFormat(customer.Address!.Zipcode!);
             Regex stateregex = new Regex(@"^(?-i:A[LKSZRAEP]|C[AOT]|D[EC]|F[LM]|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[ARW]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY])$");
             Regex emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
             Regex zipcodeRegex = new Regex(@"^[0-9]{5}(?:-[0-9]{4})?$");
-
-            foreach (var c in customers)
+            
+            if (!uniqueEmail)
             {
-                if (c.Email == customer.Email)
-                {
-                    return Conflict("Email has already been taken, try again");
-                }
+                return Conflict("Email has already been taken, choose another email.");
             }
 
-            if (emailRegex.IsMatch(customer.Email!))
-            {
-                validEmail = true;
-            } else 
+            if (!validEmail)
             {
                 return BadRequest("Email must be in proper email format");
-            }
+            } 
 
-            if (zipcodeRegex.IsMatch(customer.Address!.Zipcode!))
-            {
-                validZip = true;
-            } else
-            {
-                return BadRequest("Zipcode must have 5 digits or 9 digits");
-            }
-
-            if (stateregex.IsMatch(customer.Address!.State!))
-            {
-                validState = true;
-            } else
+            if (!validState)
             {
                 return BadRequest("Must be a valid US state abbreviation");
-            }
+            } 
 
-            if (validEmail && validState && validZip)
+            if (!validZip)
+            {
+                return BadRequest("Zipcode must have 5 digits or 9 digits. xxxxx or xxxxx-xxxx");
+            } 
+
+            if (uniqueEmail && validEmail && validState && validZip)
             {
                 _context.Customers.Add(customer);
                 await _context.SaveChangesAsync();
@@ -220,18 +180,13 @@ namespace GardenCenter.Controllers
             var customer = await _context.Customers.FindAsync(id);
             if (customer == null)
             {
-                return NotFound();
+                return NotFound("No Customer with this ID exists");
             }
 
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool CustomerExists(long id)
-        {
-            return (_context.Customers?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
