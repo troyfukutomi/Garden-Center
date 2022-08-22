@@ -11,19 +11,35 @@ using GardenCenter.Validation;
 
 namespace GardenCenter.Controllers
 {
+    /// <summary>
+    /// The controller for all customers, includes get, get by ID, put, post and delete methods
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    
     public class CustomerController : ControllerBase
     {
         private readonly DatabaseContext _context;
 
+        /// <summary>
+        /// Defines the database context as _context for future use in all the methods
+        /// </summary>
+        /// <param name="context"></param>
         public CustomerController(DatabaseContext context)
         {
             _context = context;
         }
-        // public void CustomerValidation(){}
-
-        // GET: api/Customer
+        
+        /// <summary>
+        /// Get method for customer entity. All parameters are optional but can be queried
+        /// </summary>
+        /// <param name="name">Name of the customer</param>
+        /// <param name="email">Email of the customer</param>
+        /// <param name="city">City customer lives in (pulled from Address)</param>
+        /// <param name="state">State customer lives in (pulled from Address) </param>
+        /// <param name="zipcode">Zipcode of customer (pulled from Address)</param>
+        /// <param name="street">Street name of Customer (pulled from Address)</param>
+        /// <returns>A list of customers</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers(string? name, string? email, string? city, string? state, string? zipcode, string? street)
         {
@@ -41,7 +57,11 @@ namespace GardenCenter.Controllers
             return customerValidation.getCustomers(name, email, city, state, zipcode, street, customers);
         }
 
-        // GET: api/Customer/5
+        /// <summary>
+        /// A get method for a single customer 
+        /// </summary>
+        /// <param name="id">Id of the customer to be returned</param>
+        /// <returns>A siingle customer</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Customer>> GetCustomer(long id)
         {
@@ -60,11 +80,16 @@ namespace GardenCenter.Controllers
             return customer;
         }
 
-        // PUT: api/Customer/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+       /// <summary>
+       /// Put method for customers
+       /// </summary>
+       /// <param name="id">Id of the customer being updated </param>
+       /// <param name="customer">cusotmer with updated fields</param>
+       /// <returns>No content</returns>
         public async Task<IActionResult> PutCustomer(long id, Customer customer)
         {
+            //Validation checks, validation methods are located in the validation
+            //folder and called here.
             var customers = await _context.Customers.ToListAsync();
             CustomerValidation customerValidation = new CustomerValidation(_context);
             Regex stateregex = new Regex(@"^(?-i:A[LKSZRAEP]|C[AOT]|D[EC]|F[LM]|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[ARW]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY])$");
@@ -107,6 +132,7 @@ namespace GardenCenter.Controllers
                 return BadRequest("Zipcode must have 5 digits or 9 digits. xxxxx or xxxxx-xxxx");
             } 
 
+            //all validation checks must pass before being updated
             if (validEmail && validState && validZip && uniqueEmail && matchingIds)
             {
                 _context.ChangeTracker.Clear();
@@ -119,8 +145,11 @@ namespace GardenCenter.Controllers
             return BadRequest("Customer is invalid. Try again.");
         }
 
-        // POST: api/Customer
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Post request for new customers 
+        /// </summary>
+        /// <param name="customer">the customer that is being added to the database</param>
+        /// <returns>CreatedAtActionResult</returns>
         [HttpPost]
         public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
         {
@@ -159,6 +188,7 @@ namespace GardenCenter.Controllers
                 return BadRequest("Zipcode must have 5 digits or 9 digits. xxxxx or xxxxx-xxxx");
             } 
 
+            
             if (uniqueEmail && validEmail && validState && validZip)
             {
                 _context.Customers.Add(customer);
@@ -169,7 +199,11 @@ namespace GardenCenter.Controllers
             return BadRequest("Customer is invalid. Try again");
         }
 
-        // DELETE: api/Customer/5
+        /// <summary>
+        /// Delete method for customers
+        /// </summary>
+        /// <param name="id">Id of the customer being deleted</param>
+        /// <returns>No content</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCustomer(long id)
         {

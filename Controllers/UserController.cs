@@ -7,91 +7,91 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GardenCenter.Models;
+using GardenCenter.Validation;
 
 namespace GardenCenter.Controllers
 {
+    /// <summary>
+    /// Controller for the User entity
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
         private readonly DatabaseContext _context;
 
+        /// <summary>
+        ///  Defines the database context as _context for future use in all the methods
+        /// </summary>
         public UserController(DatabaseContext context)
         {
             _context = context;
         }
 
-        // GET: api/User
+        /// <summary>
+        /// Get method for users that can include parameters that can be queried 
+        /// </summary>
+        /// <param name="name">Name of the user</param>
+        /// <param name="title">User's title</param>
+        /// <param name="email">User's email</param>
+        /// <param name="password">User's password</param>
+        /// <returns>List of users</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers(string? name, string? title, string? email, string? password)
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
 
-          var users = await _context.Users.ToListAsync();
-          var roles = await _context.Roles!.ToListAsync();
+            //roles is also called here as it is a nested object
+            //without the call, roles will be empty whenever users is called.
+            UserValidation userValidation = new UserValidation(_context);
+            var users = await _context.Users.ToListAsync();
+            var roles = await _context.Roles!.ToListAsync();
 
-          foreach (var u in users.ToList())
-          {
-            if (name != null && name != u.Name)
-                {
-                    users.Remove(u);
-                }
-            if (title != null && title != u.Title)
-                {
-                    users.Remove(u);
-                }
-            if (email != null && email != u.Email)
-                {
-                    users.Remove(u);
-                }
-            if (password!= null && password != u.Password)
-                {
-                    users.Remove(u);
-                }
-
-          }
-
-            return users;
+            return userValidation.getUsers(name, title, email, password, users);
         }
 
+        /// <summary>
+        /// Get method for users, queries by User's admin status
+        /// </summary>
+        /// <param name="admin">Admin status being queried</param>
+        /// <returns>List of users who are active admins</returns>
         [HttpGet("Roles/Admin/{admin?}")]
         public async Task<ActionResult<IEnumerable<User>>> GetUserAdmin(bool admin = true)
         {
-          var users = await _context.Users.ToListAsync();
-          var roles = await _context.Roles!.ToListAsync();
+            //roles is also called here as it is a nested object
+            //without the call, roles will be empty whenever users is called.
+            UserValidation userValidation = new UserValidation(_context);
+            var users = await _context.Users.ToListAsync();
+            var roles = await _context.Roles!.ToListAsync();
 
-          foreach (var u in users.ToList())
-          {
-            if (admin != u.Roles!.Admin)
-            {
-                users.Remove(u);
-            }
-          }  
-
-          return users;
+            return userValidation.getUsersAdmin(admin, users);
         }
 
+        /// <summary>
+        /// Get method for users, queries by User's employyee status
+        /// </summary>
+        /// <param name="employee">Employee status being queried</param>
+        /// <returns>List of users who are active employees</returns>
         [HttpGet("Roles/Employee/{employee?}")]
         public async Task<ActionResult<IEnumerable<User>>> GetUserEmployee(bool employee = false)
         {
-          var users = await _context.Users.ToListAsync();
-          var roles = await _context.Roles!.ToListAsync();
+            //roles is also called here as it is a nested object
+            //without the call, roles will be empty whenever users is called.
+            UserValidation userValidation = new UserValidation(_context);
+            var users = await _context.Users.ToListAsync();
+            var roles = await _context.Roles!.ToListAsync();
 
-          foreach (var u in users.ToList())
-          {
-            if (employee != u.Roles!.Employee)
-            {
-                users.Remove(u);
-            }
-          }  
-
-          return users;
+            return userValidation.getUsersAdmin(employee, users);
         }
 
-        // GET: api/User/5
+        /// <summary>
+        /// Get method for users by their Id
+        /// </summary>
+        /// <param name="id">Id of the user being fetched</param>
+        /// <returns>Single User</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
@@ -99,6 +99,8 @@ namespace GardenCenter.Controllers
           {
               return NotFound();
           }
+            //roles is also called here as it is a nested object
+            //without the call, roles will be empty whenever users is called.
             var user = await _context.Users.FindAsync(id);
             var roles = await _context.Roles!.ToListAsync();
 
@@ -110,57 +112,58 @@ namespace GardenCenter.Controllers
             return user;
         }
 
-        // PUT: api/User/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Put method for users
+        /// </summary>
+        /// <param name="id">Id of the user being updated</param>
+        /// <param name="user">user with new updated fields</param>
+        /// <returns>No content</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
-            if (id != user.Id)
+          
+            //Validation checks, validation methods are located in the validation
+            //folder and called here.
+            UserValidation userValidation = new UserValidation(_context);
+            var users = await _context.Users.ToListAsync();
+            bool matchingIds = userValidation.matchingIds(id, user);
+            bool validEmail = userValidation.validEmail(user.Email!);
+            bool validPassword = userValidation.validPassword(user.Password!);
+            bool uniqueEmail = userValidation.emailIsUnique(user, users);
+            bool UserExists = userValidation.UserExists(user.Id);
+
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+            
+            if (!matchingIds)
             {
                 return BadRequest("ID in query does not match order being altered");
             }
 
-            var users = await _context.Users.ToListAsync();
-            
-            bool validEmail = false;
-            bool validPassword = false;
-            Regex emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
-
-            if (_context.Users == null)
-            {
-                return Problem("Entity set 'DatabaseContext.Users'  is null.");
-            }
-
-            if (!UserExists(id))
+            if (!UserExists)
             {
                 return NotFound("ID in query does not match user being altered");
             }
 
-            if (user.Password!.Length >= 8)
+            if (!validPassword)
             {
-                validPassword = true;
-            } else
-            {
-                return BadRequest("Password must have 8 or more characters");    
-            }
+                return BadRequest("Password must have 8 or more characters");
+            } 
 
-            if (emailRegex.IsMatch(user.Email!))
-            {
-                validEmail = true;
-            } else
+            if (!validEmail)
             {
                 return BadRequest("Email must be in proper email format");
-            }
+            } 
 
-            foreach (var u in users)
+            if (!uniqueEmail)
             {
-                if (u.Email == user.Email && u.Id != user.Id)
-                {
-                    return Conflict("Email has already been taken, try again");
-                }
+                return Conflict("Email has already been taken, choose another email.");
             }
 
-            if (validEmail && validPassword)
+            //all validation checks must pass before being updated
+            if (matchingIds && UserExists && validEmail && validPassword && uniqueEmail)
             {
                 _context.ChangeTracker.Clear();
                 _context.Entry(user).State = EntityState.Modified;
@@ -172,56 +175,60 @@ namespace GardenCenter.Controllers
             return BadRequest("User is invalid. Try again.");
         }
 
-        // POST: api/User
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Post method for users
+        /// </summary>
+        /// <param name="user">new user being added to the database</param>
+        /// <returns>CreatedAtActionResult</returns>
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
             if (_context.Users == null)
             {
-                return Problem("Entity set 'DatabaseContext.Users'  is null.");
+                return NotFound();
             }
-
-            var users = await _context.Users.ToListAsync();
+            
+            //Validation checks, validation methods are located in the validation
+            //folder and called here.
+            UserValidation userValidation = new UserValidation(_context);
             var roles = await _context.Roles!.ToListAsync();
-            bool validEmail = false;
-            bool validPassword = false;
-            Regex emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
-            foreach (var u in users)
+            var users = await _context.Users.ToListAsync();
+            bool validEmail = userValidation.validEmail(user.Email!);
+            bool validPassword = userValidation.validPassword(user.Password!);
+            bool uniqueEmail = userValidation.emailIsUnique(user, users);
+            bool UserExists = userValidation.UserExists(user.Id);
+
+            if (!uniqueEmail)
             {
-                if (u.Email == user.Email)
-                {
-                    return Conflict("Email has already been taken, try again");
-                }
+                return Conflict("Email has already been taken, choose another email.");
             }
 
-            if (user.Password!.Length >= 8)
+            if (!validPassword)
             {
-                validPassword = true;
-            } else
-            {
-                return BadRequest("Password must have 8 or more characters");    
-            }
+                return BadRequest("Password must have 8 or more characters");
+            } 
 
-            if (emailRegex.IsMatch(user.Email!))
-            {
-                validEmail = true;
-            } else
+            if (!validEmail)
             {
                 return BadRequest("Email must be in proper email format");
-            }
+            } 
 
-            if (validEmail && validPassword)
+            //all validation checks must pass before being posted
+            if (uniqueEmail && validEmail && validPassword)
             {
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
                 return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
             }
             
-                return BadRequest("User is invalid. Try again");
+            return BadRequest("User is invalid. Try again");
         }
 
-        // DELETE: api/User/5
+        /// <summary>
+        /// Delete method for users
+        /// </summary>
+        /// <param name="id">Id of the user being deleted</param>
+        /// <returns>No content</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
@@ -239,11 +246,6 @@ namespace GardenCenter.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool UserExists(int id)
-        {
-            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

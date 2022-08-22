@@ -10,20 +10,34 @@ using GardenCenter.Models;
 using GardenCenter.Validation;
 
 namespace GardenCenter.Controllers
-{
+{   
+    /// <summary>
+    /// Controller for all products, includes get, get by an id, put, post, and delete methods
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
     {
         private readonly DatabaseContext _context;
 
+        /// <summary>
+        ///  Defines the database context as _context for future use in all the methods
+        /// </summary>
+        /// <param name="context"></param>
         public ProductController(DatabaseContext context)
         {
             _context = context;
         }
-        // public void ProductValidation(){}
 
-        // private readonly ProductService productService;
+    /// <summary>
+    /// Get method for products, can take in paramters to query if desired
+    /// </summary>
+    /// <param name="sku">sku number of the product</param>
+    /// <param name="type">type of  product</param>
+    /// <param name="name">name of the product</param>
+    /// <param name="manufacturer">manufacturer of the product</param>
+    /// <param name="price">price of product</param>
+    /// <returns>List of products</returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string? sku, string? type, string? name, string? manufacturer, decimal price)
     {
@@ -38,7 +52,11 @@ namespace GardenCenter.Controllers
         return productValidation.getProducts(sku, type, name, manufacturer, price, products);
     }
 
-        // GET: api/Product/5
+        /// <summary>
+        /// Get method for a single product
+        /// </summary>
+        /// <param name="id">id of the product being fetched</param>
+        /// <returns>a single product</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
@@ -56,8 +74,12 @@ namespace GardenCenter.Controllers
             return product;
         }
 
-        // PUT: api/Product/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Put method for products
+        /// </summary>
+        /// <param name="id">Id of the product being updated</param>
+        /// <param name="product">product with updated fields</param>
+        /// <returns>No Content</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
@@ -66,8 +88,8 @@ namespace GardenCenter.Controllers
                 return BadRequest("ID in query does not match product being altered");
             }
 
-            _context.Entry(product).State = EntityState.Modified;
-
+            //Validation checks, validation methods are located in the validation
+            //folder and called here.
             ProductValidation productValidation = new ProductValidation(_context);
             var products = await _context.Products.ToListAsync();
             bool uniqueSku = productValidation.uniqueSku(product, products);
@@ -90,6 +112,7 @@ namespace GardenCenter.Controllers
                 return BadRequest("Price must have 2 decimal places");
             }
 
+            //all validation checks must pass before being updated
             if (validPrice &&  uniqueSku && matchingIds)
             {
                 _context.Entry(product).State = EntityState.Modified;
@@ -100,8 +123,11 @@ namespace GardenCenter.Controllers
             return BadRequest("Product is invalid, try again");
         }
 
-        // POST: api/Product
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Post method for products
+        /// </summary>
+        /// <param name="product">new product being added to database</param>
+        /// <returns>CreatedAtActionResult</returns>
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
@@ -110,6 +136,8 @@ namespace GardenCenter.Controllers
               return Problem("Entity set 'DatabaseContext.Products'  is null.");
           }
 
+            //Validation checks, validation methods are located in the validation
+            //folder and called here.
             ProductValidation productValidation = new ProductValidation(_context);
             var products = await _context.Products.ToListAsync();
             bool uniqueSku = productValidation.uniqueSku(product, products);
@@ -126,6 +154,7 @@ namespace GardenCenter.Controllers
                 return BadRequest("Price must have 2 decimal places");
             }
 
+            //all validation checks must pass before being posted
             if (validPrice && uniqueSku)
             {
                 _context.Products.Add(product);
@@ -136,7 +165,11 @@ namespace GardenCenter.Controllers
             return BadRequest("Product is invalid, try again");
         }
 
-        // DELETE: api/Product/5
+        /// <summary>
+        /// Delete method for products
+        /// </summary>
+        /// <param name="id">Id of the product being deleted</param>
+        /// <returns>No content</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
