@@ -14,7 +14,7 @@ namespace GardenCenter.Controllers
     /// <summary>
     /// The controller for all orders, includes get, get by an id, put, post, and delete methods
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("[controller]s")]
     [ApiController]
     public class OrderController : ControllerBase
     {
@@ -38,7 +38,12 @@ namespace GardenCenter.Controllers
         /// <param name="productId">productId of the item being ordered</param>
         /// <param name="quantity">the quantity of the product being ordered</param>
         /// <returns>List of Orders</returns>
+        /// <response code="200">Returns list of customers </response> 
+        /// <response code="404">If the customer database is empty</response>
         [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders(int customerId, string? date, decimal orderTotal, int productId, int quantity)
         {
           if (_context.Orders == null)
@@ -50,7 +55,7 @@ namespace GardenCenter.Controllers
             var orders = await _context.Orders.ToListAsync();
             var items = await _context.Items.ToListAsync();
 
-            return orderValidation.getOrders(customerId, date, orderTotal, productId, quantity, orders);
+            return Ok(orderValidation.getOrders(customerId, date, orderTotal, productId, quantity, orders));
 
         }
 
@@ -59,7 +64,12 @@ namespace GardenCenter.Controllers
         /// </summary>
         /// <param name="id">Id of the order being returned</param>
         /// <returns>A single order</returns>
+        /// <response code="200">Returns single customer </response> 
+        /// <response code="404">If the customer database is empty</response>
         [HttpGet("{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
           if (_context.Orders == null)
@@ -84,7 +94,13 @@ namespace GardenCenter.Controllers
         /// <param name="id">Id of the order being altered</param>
         /// <param name="order">the new order being returned to the database</param>
         /// <returns>No content</returns>
+        /// <response code="200">Returns nothing, but updated order </response> 
+        /// <response code="400">If the any validation checks fail</response>
+        /// <response code="404">If the order being updated does not exist</response>
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutOrder(int id, Order order)
         {
             if (id != order.Id)
@@ -163,12 +179,18 @@ namespace GardenCenter.Controllers
         /// </summary>
         /// <param name="order">new order that is being pushed to the database</param>
         /// <returns>CreatedAtActionResult</returns>
+        /// <response code="201">Creates a new order </response> 
+        /// <response code="400">If the any validation checks fail</response>
+        /// <response code="404">If the order database is empty</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Order>> PostOrder(Order order)
         {
             if (_context.Orders == null)
             {
-                return Problem("Entity set 'DatabaseContext.Orders'  is null.");
+                return NotFound("Entity set 'DatabaseContext.Orders'  is null.");
             }
 
             //Validation checks, validation methods are located in the validation
@@ -233,7 +255,11 @@ namespace GardenCenter.Controllers
         /// </summary>
         /// <param name="id">Id of the order being deleted</param>
         /// <returns>No content</returns>
+        /// <response code="204">Returns no content </response> 
+        /// <response code="404">If the order being updated does not exist or database is empty</response>
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             if (_context.Orders == null)

@@ -14,7 +14,7 @@ namespace GardenCenter.Controllers
     /// <summary>
     /// The controller for all customers, includes get, get by ID, put, post and delete methods
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("[controller]s")]
     [ApiController]
     
     public class CustomerController : ControllerBase
@@ -40,7 +40,12 @@ namespace GardenCenter.Controllers
         /// <param name="zipcode">Zipcode of customer (pulled from Address)</param>
         /// <param name="street">Street name of Customer (pulled from Address)</param>
         /// <returns>A list of customers</returns>
+        /// <response code="200">Returns list of customers </response> 
+        /// <response code="404">If the customer database is empty</response>
         [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers(string? name, string? email, string? city, string? state, string? zipcode, string? street)
         {
             if (_context.Customers == null)
@@ -54,15 +59,20 @@ namespace GardenCenter.Controllers
             var addresses = await _context.Addresses.ToListAsync();
             var customers = await _context.Customers.ToListAsync(); 
             
-            return customerValidation.getCustomers(name, email, city, state, zipcode, street, customers);
+            return Ok(customerValidation.getCustomers(name, email, city, state, zipcode, street, customers));
         }
 
         /// <summary>
         /// A get method for a single customer 
         /// </summary>
         /// <param name="id">Id of the customer to be returned</param>
-        /// <returns>A siingle customer</returns>
+        /// <returns>A single customer</returns>
+        /// <response code="200">Returns a single customer </response> 
+        /// <response code="400">If the customer database is empty</response>
         [HttpGet("{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Customer>> GetCustomer(long id)
         {
             if (_context.Customers == null)
@@ -77,15 +87,24 @@ namespace GardenCenter.Controllers
                 return NotFound();
             }
 
-            return customer;
+            return Ok(customer);
         }
 
-       /// <summary>
-       /// Put method for customers
-       /// </summary>
-       /// <param name="id">Id of the customer being updated </param>
-       /// <param name="customer">cusotmer with updated fields</param>
-       /// <returns>No content</returns>
+        /// <summary>
+        /// Put method for customers
+        /// </summary>
+        /// <param name="id">Id of the customer being updated </param>
+        /// <param name="customer">cusotmer with updated fields</param>
+        /// <returns>No content</returns>
+        /// <response code="204">Returns a single customer that was updated </response> 
+        /// <response code="400">If the any validation checks fail</response>
+        /// <response code="404">If the customer doesn't exist</response>
+        /// <response code="409">If the customer email is not unique</response>
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> PutCustomer(long id, Customer customer)
         {
             //Validation checks, validation methods are located in the validation
@@ -104,7 +123,7 @@ namespace GardenCenter.Controllers
 
             if (!customerExists)
             {
-                return NotFound("No orders with that Id exist. Try Again"); 
+                return NotFound("No customers with that Id exist. Try Again"); 
             } 
 
             if (!matchingIds)
@@ -150,12 +169,20 @@ namespace GardenCenter.Controllers
         /// </summary>
         /// <param name="customer">the customer that is being added to the database</param>
         /// <returns>CreatedAtActionResult</returns>
+        /// <response code="201">Creates a new customer </response> 
+        /// <response code="400">If the any validation checks fail</response>
+        /// <response code="404">If the customer database is empty</response>
+        /// <response code="409">If the customer email is not unique</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
         {
             if (_context.Customers == null)
             {
-                return Problem("Entity set 'DatabaseContext.Customers'  is null.");
+                return NotFound("Entity set 'DatabaseContext.Customers'  is null.");
             }
             CustomerValidation customerValidation = new CustomerValidation(_context);
             var customers = await _context.Customers.ToListAsync();
@@ -204,7 +231,11 @@ namespace GardenCenter.Controllers
         /// </summary>
         /// <param name="id">Id of the customer being deleted</param>
         /// <returns>No content</returns>
+        /// <response code="204">Successfullly deleted customer</response>
+        /// <response code="404">If the customer database is empty or if customer is empty</response>
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteCustomer(long id)
         {
             if (_context.Customers == null)

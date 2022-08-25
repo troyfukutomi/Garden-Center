@@ -14,7 +14,7 @@ namespace GardenCenter.Controllers
     /// <summary>
     /// Controller for the User entity
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("[controller]s")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -36,7 +36,12 @@ namespace GardenCenter.Controllers
         /// <param name="email">User's email</param>
         /// <param name="password">User's password</param>
         /// <returns>List of users</returns>
+        /// <response code="200">Returns list of users </response> 
+        /// <response code="404">If the user database is empty</response>
         [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers(string? name, string? title, string? email, string? password)
         {
             if (_context.Users == null)
@@ -50,7 +55,7 @@ namespace GardenCenter.Controllers
             var users = await _context.Users.ToListAsync();
             var roles = await _context.Roles!.ToListAsync();
 
-            return userValidation.getUsers(name, title, email, password, users);
+            return Ok(userValidation.getUsers(name, title, email, password, users));
         }
 
         /// <summary>
@@ -58,16 +63,25 @@ namespace GardenCenter.Controllers
         /// </summary>
         /// <param name="admin">Admin status being queried</param>
         /// <returns>List of users who are active admins</returns>
+        /// <response code="200">Returns list of users </response> 
+        /// <response code="404">If the user database is empty</response>
         [HttpGet("Roles/Admin/{admin?}")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<User>>> GetUserAdmin(bool admin = true)
         {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
             //roles is also called here as it is a nested object
             //without the call, roles will be empty whenever users is called.
             UserValidation userValidation = new UserValidation(_context);
             var users = await _context.Users.ToListAsync();
             var roles = await _context.Roles!.ToListAsync();
 
-            return userValidation.getUsersAdmin(admin, users);
+            return Ok(userValidation.getUsersAdmin(admin, users));
         }
 
         /// <summary>
@@ -75,16 +89,25 @@ namespace GardenCenter.Controllers
         /// </summary>
         /// <param name="employee">Employee status being queried</param>
         /// <returns>List of users who are active employees</returns>
+        /// <response code="200">Returns list of users </response> 
+        /// <response code="404">If the user database is empty</response>
         [HttpGet("Roles/Employee/{employee?}")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<User>>> GetUserEmployee(bool employee = false)
         {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
             //roles is also called here as it is a nested object
             //without the call, roles will be empty whenever users is called.
             UserValidation userValidation = new UserValidation(_context);
             var users = await _context.Users.ToListAsync();
             var roles = await _context.Roles!.ToListAsync();
 
-            return userValidation.getUsersAdmin(employee, users);
+            return Ok(userValidation.getUsersAdmin(employee, users));
         }
 
         /// <summary>
@@ -92,7 +115,12 @@ namespace GardenCenter.Controllers
         /// </summary>
         /// <param name="id">Id of the user being fetched</param>
         /// <returns>Single User</returns>
+        /// <response code="200">Returns single user </response> 
+        /// <response code="404">If the user database is empty or is user doesn't exist</response>
         [HttpGet("{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<User>> GetUser(int id)
         {
           if (_context.Users == null)
@@ -109,7 +137,7 @@ namespace GardenCenter.Controllers
                 return NotFound();
             }
 
-            return user;
+            return Ok(user);
         }
 
         /// <summary>
@@ -118,7 +146,15 @@ namespace GardenCenter.Controllers
         /// <param name="id">Id of the user being updated</param>
         /// <param name="user">user with new updated fields</param>
         /// <returns>No content</returns>
+        /// <response code="204">No content, user is updated </response> 
+        /// <response code="400">If the any validation checks fail</response>
+        /// <response code="404">If the user doesn't exist or user database is empty</response>
+        /// <response code="409">If the user email is not unique</response>
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> PutUser(int id, User user)
         {
           
@@ -180,7 +216,15 @@ namespace GardenCenter.Controllers
         /// </summary>
         /// <param name="user">new user being added to the database</param>
         /// <returns>CreatedAtActionResult</returns>
+        /// <response code="201">Creates a new user </response> 
+        /// <response code="400">If the any validation checks fail</response>
+        /// <response code="404">If the user doesn't exist</response>
+        /// <response code="409">If the user email is not unique</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<User>> PostUser(User user)
         {
             if (_context.Users == null)
@@ -229,7 +273,11 @@ namespace GardenCenter.Controllers
         /// </summary>
         /// <param name="id">Id of the user being deleted</param>
         /// <returns>No content</returns>
+        /// <response code="204">Successfullly deleted user</response>
+        /// <response code="404">If the user database is empty or if user is empty</response>
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteUser(int id)
         {
             if (_context.Users == null)
