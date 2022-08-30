@@ -29,6 +29,8 @@ namespace GardenCenter.Controllers
             _context = context;
         }
 
+        GardenCenter.Logging.Logger logger = new GardenCenter.Logging.Logger();
+
         /// <summary>
         /// Get method for all orders, can take in parameters to query.
         /// </summary>
@@ -48,7 +50,8 @@ namespace GardenCenter.Controllers
         {
           if (_context.Orders == null)
           {
-              return NotFound();
+                logger.Log("Order database is empty");
+                return NotFound();
           }
 
             OrderValidation orderValidation = new OrderValidation(_context);
@@ -72,15 +75,17 @@ namespace GardenCenter.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
-          if (_context.Orders == null)
-          {
-              return NotFound();
-          }
+            if (_context.Orders == null)
+            {
+                logger.Log("Order database is empty");
+                return NotFound();
+            }
             var order = await _context.Orders.FindAsync(id);
             var items = await _context.Items.ToListAsync();
 
             if (order == null)
             {
+                logger.Log("Order was not found");
                 return NotFound();
             }
 
@@ -103,10 +108,6 @@ namespace GardenCenter.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutOrder(int id, Order order)
         {
-            if (id != order.Id)
-            {
-                return BadRequest("ID in query does not match order being altered");
-            }
 
             //Validation checks, validation methods are located in the validation
             //folder and called here.
@@ -170,6 +171,7 @@ namespace GardenCenter.Controllers
                     await _context.SaveChangesAsync();
                     return Ok();
             }
+            logger.Log("Order is invalid being updated is invalid");
             return BadRequest("Order is invalid. Try again");
         }
 
@@ -190,6 +192,7 @@ namespace GardenCenter.Controllers
         {
             if (_context.Orders == null)
             {
+                logger.Log("Order database is empty");
                 return NotFound("Entity set 'DatabaseContext.Orders'  is null.");
             }
 
@@ -246,6 +249,7 @@ namespace GardenCenter.Controllers
                 return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
             }
 
+            logger.Log("Order being created is invalid");
             return BadRequest("Order is invalid. Try Again ");
 
         }
@@ -264,11 +268,13 @@ namespace GardenCenter.Controllers
         {
             if (_context.Orders == null)
             {
+                logger.Log("Order database is empty");
                 return NotFound();
             }
             var order = await _context.Orders.FindAsync(id);
             if (order == null)
             {
+                logger.Log("Order being deleted could not be found");
                 return NotFound();
             }
 

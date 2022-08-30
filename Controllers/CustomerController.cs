@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GardenCenter.Models;
 using GardenCenter.Validation;
+using GardenCenter.Logging;
 
 namespace GardenCenter.Controllers
 {
@@ -21,6 +22,7 @@ namespace GardenCenter.Controllers
     {
         private readonly DatabaseContext _context;
 
+
         /// <summary>
         /// Defines the database context as _context for future use in all the methods
         /// </summary>
@@ -29,7 +31,9 @@ namespace GardenCenter.Controllers
         {
             _context = context;
         }
-        
+
+        GardenCenter.Logging.Logger logger = new GardenCenter.Logging.Logger();
+
         /// <summary>
         /// Get method for customer entity. All parameters are optional but can be queried
         /// </summary>
@@ -48,12 +52,15 @@ namespace GardenCenter.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers(string? name, string? email, string? city, string? state, string? zipcode, string? street)
         {
+
             if (_context.Customers == null)
             {
+                logger.Log("Customer database is empty");
                 return NotFound();
             }
 
             CustomerValidation customerValidation = new CustomerValidation(_context);
+        
             // addresses is not directly used here but is required, without it  
             // all customers returned after a get request will have null addresses
             var addresses = await _context.Addresses.ToListAsync();
@@ -77,6 +84,7 @@ namespace GardenCenter.Controllers
         {
             if (_context.Customers == null)
             {
+                logger.Log("Customer database is empty");
                 return NotFound();
             }
             var customer = await _context.Customers.FindAsync(id);
@@ -84,6 +92,7 @@ namespace GardenCenter.Controllers
             
             if (customer == null)
             {
+                logger.Log("Customer was not found");
                 return NotFound();
             }
 
@@ -161,6 +170,7 @@ namespace GardenCenter.Controllers
                 return Ok();
             }
 
+            logger.Log("Customer being updated is invalid");
             return BadRequest("Customer is invalid. Try again.");
         }
 
@@ -182,6 +192,7 @@ namespace GardenCenter.Controllers
         {
             if (_context.Customers == null)
             {
+                logger.Log("Customer database is empty");
                 return NotFound("Entity set 'DatabaseContext.Customers'  is null.");
             }
             CustomerValidation customerValidation = new CustomerValidation(_context);
@@ -223,6 +234,7 @@ namespace GardenCenter.Controllers
                 return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, customer);
             }
 
+            logger.Log("Customer being created is invalid");
             return BadRequest("Customer is invalid. Try again");
         }
 
@@ -240,11 +252,13 @@ namespace GardenCenter.Controllers
         {
             if (_context.Customers == null)
             {
+                logger.Log("Customer database is empty");
                 return NotFound();
             }
             var customer = await _context.Customers.FindAsync(id);
             if (customer == null)
             {
+                logger.Log("Particular customer does not exist");
                 return NotFound("No Customer with this ID exists");
             }
 

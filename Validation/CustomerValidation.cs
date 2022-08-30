@@ -26,6 +26,8 @@ namespace GardenCenter.Validation
             _context = context;
         }
 
+        GardenCenter.Logging.Logger logger = new GardenCenter.Logging.Logger();
+
         /// <summary>
         /// Gets customers, takes in optional queries
         /// </summary>
@@ -84,6 +86,7 @@ namespace GardenCenter.Validation
                 return true;
             } else
             {
+                logger.Log("Error: Id's did not match");
                 return false;
             }
         }
@@ -101,6 +104,7 @@ namespace GardenCenter.Validation
             {
                 if (c.Email == customer.Email && c.Id != customer.Id )
                 {
+                    logger.Log("Error: Email is alradey taken");
                     return false;
                 }
             }
@@ -120,6 +124,7 @@ namespace GardenCenter.Validation
                 return true;
             } else
             {
+                logger.Log("Error: Email is not in the proper format");
                 return false;
             }
         }
@@ -137,6 +142,7 @@ namespace GardenCenter.Validation
                 return true;
             } else 
             {
+                logger.Log("Error: Zipcode is not in the proper format");
                 return false;
             }
         }
@@ -154,6 +160,7 @@ namespace GardenCenter.Validation
                 return true;
             } else
             {
+                logger.Log("Error: State is not a proper US state abbreviation");
                 return false;
             }
         }

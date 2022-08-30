@@ -20,6 +20,8 @@ namespace GardenCenter.Validation
             _context = context;
         }
 
+        GardenCenter.Logging.Logger logger = new GardenCenter.Logging.Logger();
+
         /// <summary>
         /// gets products, can take in optional parameters that can be used to query.
         /// </summary>
@@ -71,6 +73,7 @@ namespace GardenCenter.Validation
                 return true;
             } else
             {
+                logger.Log("Error: Id's did not match");
                 return false;
             }
         }
@@ -88,6 +91,7 @@ namespace GardenCenter.Validation
                 return true;
             } else
             {
+                logger.Log("Error: Price must have exactly 2 decimal places");
                 return false;
             }
         }
@@ -104,6 +108,7 @@ namespace GardenCenter.Validation
             {
                 if (p.Sku == product.Sku && p.Id != product.Id)
                 {
+                    logger.Log("Error: Sku number has already been taken");
                     return false;
                 }
             }

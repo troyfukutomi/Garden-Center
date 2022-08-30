@@ -26,6 +26,8 @@ namespace GardenCenter.Validation
             _context = context;
         }
 
+        GardenCenter.Logging.Logger logger = new GardenCenter.Logging.Logger();
+
         /// <summary>
         /// gets all users, can take on optional parameters to query by
         /// </summary>
@@ -111,6 +113,7 @@ namespace GardenCenter.Validation
                 return true;
             } else 
             {
+                logger.Log("Error: Password must be 8 or more characters");
                 return false;
             }
         }
@@ -128,6 +131,7 @@ namespace GardenCenter.Validation
                 return true;
             } else
             {
+                logger.Log("Error: Email is not in proper format");
                 return false;
             }
         }
@@ -145,6 +149,7 @@ namespace GardenCenter.Validation
             {
                 if (c.Email == user.Email && c.Id != user.Id)
                 {
+                    logger.Log("Error: Email has already been taken");
                     return false;
                 }
             }
@@ -165,6 +170,7 @@ namespace GardenCenter.Validation
             }
             else
             {
+                logger.Log("Error: Id's did not match");
                 return false;
             }
         }

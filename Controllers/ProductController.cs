@@ -29,34 +29,37 @@ namespace GardenCenter.Controllers
             _context = context;
         }
 
-    /// <summary>
-    /// Get method for products, can take in paramters to query if desired
-    /// </summary>
-    /// <param name="sku">sku number of the product</param>
-    /// <param name="type">type of  product</param>
-    /// <param name="name">name of the product</param>
-    /// <param name="manufacturer">manufacturer of the product</param>
-    /// <param name="price">price of product</param>
-    /// <returns>List of products</returns>
-    /// <response code="200">Returns list of products </response> 
-    /// <response code="400">If the any validation checks fail</response>
-    /// <response code="404">If the product database is empty</response>
-    [HttpGet]
-    [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string? sku, string? type, string? name, string? manufacturer, decimal price)
-    {
-        if (_context.Products == null)
+        GardenCenter.Logging.Logger logger = new GardenCenter.Logging.Logger();
+
+        /// <summary>
+        /// Get method for products, can take in paramters to query if desired
+        /// </summary>
+        /// <param name="sku">sku number of the product</param>
+        /// <param name="type">type of  product</param>
+        /// <param name="name">name of the product</param>
+        /// <param name="manufacturer">manufacturer of the product</param>
+        /// <param name="price">price of product</param>
+        /// <returns>List of products</returns>
+        /// <response code="200">Returns list of products </response> 
+        /// <response code="400">If the any validation checks fail</response>
+        /// <response code="404">If the product database is empty</response>
+        [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(string? sku, string? type, string? name, string? manufacturer, decimal price)
         {
-            return NotFound();
+            if (_context.Products == null)
+            {
+                logger.Log("Product database is empty");
+                return NotFound();
+            }
+
+            ProductValidation productValidation = new ProductValidation(_context);
+            var products = await _context.Products.ToListAsync();
+
+            return Ok(productValidation.getProducts(sku, type, name, manufacturer, price, products));
         }
-
-        ProductValidation productValidation = new ProductValidation(_context);
-        var products = await _context.Products.ToListAsync();
-
-        return Ok(productValidation.getProducts(sku, type, name, manufacturer, price, products));
-    }
 
         /// <summary>
         /// Get method for a single product
@@ -72,13 +75,15 @@ namespace GardenCenter.Controllers
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
           if (_context.Products == null)
-          {
-              return NotFound();
-          }
+            {
+                logger.Log("Product database is empty");
+                return NotFound();
+            }
             var product = await _context.Products.FindAsync(id);
 
             if (product == null)
             {
+                logger.Log("Product was not found");
                 return NotFound();
             }
 
@@ -134,6 +139,7 @@ namespace GardenCenter.Controllers
                 return Ok();
             }
 
+            logger.Log("Product being updated is invalid");
             return BadRequest("Product is invalid, try again");
         }
 
@@ -183,6 +189,7 @@ namespace GardenCenter.Controllers
                 return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
             }
 
+            logger.Log("Product being created is invalid");
             return BadRequest("Product is invalid, try again");
         }
 
@@ -201,11 +208,13 @@ namespace GardenCenter.Controllers
         {
             if (_context.Products == null)
             {
+                logger.Log("Product database is empty");
                 return NotFound();
             }
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
+                logger.Log("Product does not exist, try again");
                 return NotFound("No Product with this ID exists");
             }
 

@@ -26,6 +26,8 @@ namespace GardenCenter.Validation
             _context = context;
         }
 
+        GardenCenter.Logging.Logger logger = new GardenCenter.Logging.Logger();
+
         /// <summary>
         /// gets orders, can take in optional parameters that can be used to query.
         /// </summary>
@@ -78,6 +80,7 @@ namespace GardenCenter.Validation
             }
             else
             {
+                logger.Log("Error: Id's did not match");
                 return false;
             }
         }
@@ -95,6 +98,7 @@ namespace GardenCenter.Validation
                 return true;
             } else
             {
+                logger.Log("Error: Date does not match the proper yyyy-mm-dd format");
                 return false;
             }
         }
@@ -112,6 +116,7 @@ namespace GardenCenter.Validation
                 return true;
             } else
             {
+                logger.Log("Error: Total doe not have exactly 2 decimal places");
                 return false;
             }
         }
@@ -128,6 +133,7 @@ namespace GardenCenter.Validation
                 return false;
             } else
             {
+                logger.Log("Error: Quantity must be a positive number");
                 return true;
             }
         }

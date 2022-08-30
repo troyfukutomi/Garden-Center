@@ -28,6 +28,8 @@ namespace GardenCenter.Controllers
             _context = context;
         }
 
+        GardenCenter.Logging.Logger logger = new GardenCenter.Logging.Logger();
+
         /// <summary>
         /// Get method for users that can include parameters that can be queried 
         /// </summary>
@@ -46,6 +48,7 @@ namespace GardenCenter.Controllers
         {
             if (_context.Users == null)
             {
+                logger.Log("User database is empty");
                 return NotFound();
             }
 
@@ -73,6 +76,7 @@ namespace GardenCenter.Controllers
         {
             if (_context.Users == null)
             {
+                logger.Log("User database is empty");
                 return NotFound();
             }
             //roles is also called here as it is a nested object
@@ -99,6 +103,7 @@ namespace GardenCenter.Controllers
         {
             if (_context.Users == null)
             {
+                logger.Log("User database is empty");
                 return NotFound();
             }
             //roles is also called here as it is a nested object
@@ -123,10 +128,11 @@ namespace GardenCenter.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
+            if (_context.Users == null)
+            {
+                logger.Log("User database is empty");
+                return NotFound();
+            }
             //roles is also called here as it is a nested object
             //without the call, roles will be empty whenever users is called.
             var user = await _context.Users.FindAsync(id);
@@ -134,6 +140,7 @@ namespace GardenCenter.Controllers
 
             if (user == null)
             {
+                logger.Log("User with that Id could not be found");
                 return NotFound();
             }
 
@@ -170,6 +177,7 @@ namespace GardenCenter.Controllers
 
             if (_context.Users == null)
             {
+                logger.Log("User database is empty");
                 return NotFound();
             }
             
@@ -208,6 +216,7 @@ namespace GardenCenter.Controllers
                 return Ok();
             }
 
+            logger.Log("User being updated is invalid");    
             return BadRequest("User is invalid. Try again.");
         }
 
@@ -229,6 +238,7 @@ namespace GardenCenter.Controllers
         {
             if (_context.Users == null)
             {
+                logger.Log("User database is empty");
                 return NotFound();
             }
             
@@ -265,6 +275,7 @@ namespace GardenCenter.Controllers
                 return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
             }
             
+            logger.Log("User being created is invalid");
             return BadRequest("User is invalid. Try again");
         }
 
@@ -282,11 +293,13 @@ namespace GardenCenter.Controllers
         {
             if (_context.Users == null)
             {
+                logger.Log("User database is empty");
                 return NotFound();
             }
             var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
+                logger.Log("User does not exist, try again");
                 return NotFound();
             }
 
