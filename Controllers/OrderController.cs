@@ -86,7 +86,7 @@ namespace GardenCenter.Controllers
             if (order == null)
             {
                 logger.Log("Order was not found");
-                return NotFound();
+                return NotFound("no order with that Id exists");
             }
 
             return order;

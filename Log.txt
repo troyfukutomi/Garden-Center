@@ -2,3 +2,291 @@
 Log Entry : 2:46:22 PM Monday, August 29, 2022
   :Id's did not match
 -----------------------------------------------
+
+Log Entry : 3:19:26 PM Tuesday, August 30, 2022
+  :Customer was not found
+-----------------------------------------------
+
+Log Entry : 3:35:45 PM Tuesday, August 30, 2022
+  :Customer was not found
+-----------------------------------------------
+
+Log Entry : 3:47:34 PM Tuesday, August 30, 2022
+  :Error: Email is not in the proper format
+-----------------------------------------------
+
+Log Entry : 3:48:43 PM Tuesday, August 30, 2022
+  :Error: Id's did not match
+-----------------------------------------------
+
+Log Entry : 3:49:53 PM Tuesday, August 30, 2022
+  :Error: Email is not in the proper format
+-----------------------------------------------
+
+Log Entry : 12:00:47 PM Wednesday, August 31, 2022
+  :Error: Email is alradey taken
+-----------------------------------------------
+
+Log Entry : 12:02:32 PM Wednesday, August 31, 2022
+  :Error: State is not a proper US state abbreviation
+-----------------------------------------------
+
+Log Entry : 12:04:23 PM Wednesday, August 31, 2022
+  :Error: Zipcode is not in the proper format
+-----------------------------------------------
+
+Log Entry : 12:06:55 PM Wednesday, August 31, 2022
+  :Error: State is not a proper US state abbreviation
+-----------------------------------------------
+
+Log Entry : 12:09:36 PM Wednesday, August 31, 2022
+  :Error: Email is alradey taken
+-----------------------------------------------
+
+Log Entry : 12:10:41 PM Wednesday, August 31, 2022
+  :Error: Email is not in the proper format
+-----------------------------------------------
+
+Log Entry : 12:11:45 PM Wednesday, August 31, 2022
+  :Error: State is not a proper US state abbreviation
+-----------------------------------------------
+
+Log Entry : 12:13:23 PM Wednesday, August 31, 2022
+  :Error: Email is not in the proper format
+-----------------------------------------------
+
+Log Entry : 12:13:23 PM Wednesday, August 31, 2022
+  :Error: Zipcode is not in the proper format
+-----------------------------------------------
+
+Log Entry : 12:13:29 PM Wednesday, August 31, 2022
+  :Error: Zipcode is not in the proper format
+-----------------------------------------------
+
+Log Entry : 12:17:54 PM Wednesday, August 31, 2022
+  :Particular customer does not exist
+-----------------------------------------------
+
+Log Entry : 12:18:06 PM Wednesday, August 31, 2022
+  :Particular customer does not exist
+-----------------------------------------------
+
+Log Entry : 12:21:20 PM Wednesday, August 31, 2022
+  :Customer was not found
+-----------------------------------------------
+
+Log Entry : 12:29:37 PM Wednesday, August 31, 2022
+  :Particular customer does not exist
+-----------------------------------------------
+
+Log Entry : 12:37:48 PM Wednesday, August 31, 2022
+  :Particular customer does not exist
+-----------------------------------------------
+
+Log Entry : 12:42:56 PM Wednesday, August 31, 2022
+  :Customer was not found
+-----------------------------------------------
+
+Log Entry : 12:50:34 PM Wednesday, August 31, 2022
+  :Order was not found
+-----------------------------------------------
+
+Log Entry : 12:53:58 PM Wednesday, August 31, 2022
+  :Order was not found
+-----------------------------------------------
+
+Log Entry : 2:21:06 PM Wednesday, August 31, 2022
+  :Error: Total doe not have exactly 2 decimal places
+-----------------------------------------------
+
+Log Entry : 2:21:06 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:21:11 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:26:32 PM Wednesday, August 31, 2022
+  :Error: Id's did not match
+-----------------------------------------------
+
+Log Entry : 2:26:32 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:27:52 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:32:39 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:34:23 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:34:29 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:35:51 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:36:58 PM Wednesday, August 31, 2022
+  :Error: Date does not match the proper yyyy-mm-dd format
+-----------------------------------------------
+
+Log Entry : 2:36:58 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:38:21 PM Wednesday, August 31, 2022
+  :Error: Total doe not have exactly 2 decimal places
+-----------------------------------------------
+
+Log Entry : 2:38:21 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:38:32 PM Wednesday, August 31, 2022
+  :Error: Total doe not have exactly 2 decimal places
+-----------------------------------------------
+
+Log Entry : 2:38:32 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:43:16 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:44:03 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:44:16 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:44:24 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:47:56 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:48:54 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:49:53 PM Wednesday, August 31, 2022
+  :Error: Date does not match the proper yyyy-mm-dd format
+-----------------------------------------------
+
+Log Entry : 2:49:53 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:50:59 PM Wednesday, August 31, 2022
+  :Error: Total doe not have exactly 2 decimal places
+-----------------------------------------------
+
+Log Entry : 2:50:59 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:52:36 PM Wednesday, August 31, 2022
+  :Error: Quantity must be a positive number
+-----------------------------------------------
+
+Log Entry : 2:53:33 PM Wednesday, August 31, 2022
+  :Order being deleted could not be found
+-----------------------------------------------
+
+Log Entry : 3:27:15 PM Wednesday, August 31, 2022
+  :Product was not found
+-----------------------------------------------
+
+Log Entry : 3:27:34 PM Wednesday, August 31, 2022
+  :Product was not found
+-----------------------------------------------
+
+Log Entry : 11:38:59 AM Thursday, September 1, 2022
+  :Error: Sku number has already been taken
+-----------------------------------------------
+
+Log Entry : 11:39:53 AM Thursday, September 1, 2022
+  :Error: Sku number has already been taken
+-----------------------------------------------
+
+Log Entry : 11:39:53 AM Thursday, September 1, 2022
+  :Error: Id's did not match
+-----------------------------------------------
+
+Log Entry : 11:41:51 AM Thursday, September 1, 2022
+  :Error: Sku number has already been taken
+-----------------------------------------------
+
+Log Entry : 11:42:48 AM Thursday, September 1, 2022
+  :Error: Price must have exactly 2 decimal places
+-----------------------------------------------
+
+Log Entry : 12:05:32 PM Thursday, September 1, 2022
+  :Error: Sku number has already been taken
+-----------------------------------------------
+
+Log Entry : 12:07:33 PM Thursday, September 1, 2022
+  :Error: Price must have exactly 2 decimal places
+-----------------------------------------------
+
+Log Entry : 12:11:09 PM Thursday, September 1, 2022
+  :Product does not exist, try again
+-----------------------------------------------
+
+Log Entry : 12:29:38 PM Thursday, September 1, 2022
+  :User with that Id could not be found
+-----------------------------------------------
+
+Log Entry : 12:41:03 PM Thursday, September 1, 2022
+  :Error: Id's did not match
+-----------------------------------------------
+
+Log Entry : 12:41:03 PM Thursday, September 1, 2022
+  :Error: Email has already been taken
+-----------------------------------------------
+
+Log Entry : 12:43:01 PM Thursday, September 1, 2022
+  :Error: Password must be 8 or more characters
+-----------------------------------------------
+
+Log Entry : 12:43:41 PM Thursday, September 1, 2022
+  :Error: Email has already been taken
+-----------------------------------------------
+
+Log Entry : 1:01:33 PM Thursday, September 1, 2022
+  :Error: Email is not in proper format
+-----------------------------------------------
+
+Log Entry : 1:05:07 PM Thursday, September 1, 2022
+  :Error: Email has already been taken
+-----------------------------------------------
+
+Log Entry : 1:05:21 PM Thursday, September 1, 2022
+  :Error: Email has already been taken
+-----------------------------------------------
+
+Log Entry : 1:06:22 PM Thursday, September 1, 2022
+  :Error: Password must be 8 or more characters
+-----------------------------------------------
+
+Log Entry : 1:07:17 PM Thursday, September 1, 2022
+  :Error: Email is not in proper format
+-----------------------------------------------
+
+Log Entry : 1:08:22 PM Thursday, September 1, 2022
+  :User does not exist, try again
+-----------------------------------------------

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ZI9g3tMsqfeO3RGVsrn1DsqANHaS2/MjcVEnu6TKPlXVGaPvMq4+Y5ts6RJMiJbYA6d2dLpNndULbjqpcN4VeQ==",
+  "dgSpecHash": "K6R1OPQymCtcSfK1h4zAsDr03k13sSalXqX5EcwNTJFAPaxDsKBxV2cjn/LRLn55UZ7exh55EQiMudT0BFUOXQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Troy\\Code\\dotNET\\GardenCenter\\GardenCenter.csproj",
+  "projectFilePath": "c:\\Users\\Troy\\Code\\dotNET\\GardenCenter\\GardenCenter.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Troy\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Troy\\.nuget\\packages\\messagepack\\2.1.152\\messagepack.2.1.152.nupkg.sha512",

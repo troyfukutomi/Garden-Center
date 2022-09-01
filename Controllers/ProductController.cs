@@ -114,7 +114,13 @@ namespace GardenCenter.Controllers
             bool uniqueSku = productValidation.uniqueSku(product, products);
             bool validPrice = productValidation.priceIsProperFormat(product.Price);
             bool matchingIds = productValidation.matchingIds(id, product);
+            bool productExists = productValidation.productExists(id);
             Regex priceRegex = new Regex(@"^[0-9]{0,}\.[0-9]{2}$");
+
+            if (!productExists)
+            {
+                return NotFound("No products with that Id exist. Try Again");
+            }
 
             if (!matchingIds)
             {
@@ -134,6 +140,7 @@ namespace GardenCenter.Controllers
             //all validation checks must pass before being updated
             if (validPrice &&  uniqueSku && matchingIds)
             {
+                _context.ChangeTracker.Clear();
                 _context.Entry(product).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 return Ok();
@@ -158,10 +165,10 @@ namespace GardenCenter.Controllers
 
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
-          if (_context.Products == null)
-          {
-              return Problem("Entity set 'DatabaseContext.Products'  is null.");
-          }
+            if (_context.Products == null)
+            {
+                return Problem("Entity set 'DatabaseContext.Products'  is null.");
+            }
 
             //Validation checks, validation methods are located in the validation
             //folder and called here.

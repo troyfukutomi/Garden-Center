@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Troy\\Code\\dotNET\\GardenCenter\\GardenCenter.csproj": {}
+    "c:\\Users\\Troy\\Code\\dotNET\\GardenCenter\\GardenCenter.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Troy\\Code\\dotNET\\GardenCenter\\GardenCenter.csproj": {
+    "c:\\Users\\Troy\\Code\\dotNET\\GardenCenter\\GardenCenter.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Troy\\Code\\dotNET\\GardenCenter\\GardenCenter.csproj",
+        "projectUniqueName": "c:\\Users\\Troy\\Code\\dotNET\\GardenCenter\\GardenCenter.csproj",
         "projectName": "GardenCenter",
-        "projectPath": "C:\\Users\\Troy\\Code\\dotNET\\GardenCenter\\GardenCenter.csproj",
+        "projectPath": "c:\\Users\\Troy\\Code\\dotNET\\GardenCenter\\GardenCenter.csproj",
         "packagesPath": "C:\\Users\\Troy\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Troy\\Code\\dotNET\\GardenCenter\\obj\\",
+        "outputPath": "c:\\Users\\Troy\\Code\\dotNET\\GardenCenter\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Troy\\AppData\\Roaming\\NuGet\\NuGet.Config"

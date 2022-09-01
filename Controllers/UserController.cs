@@ -112,7 +112,7 @@ namespace GardenCenter.Controllers
             var users = await _context.Users.ToListAsync();
             var roles = await _context.Roles!.ToListAsync();
 
-            return Ok(userValidation.getUsersAdmin(employee, users));
+            return Ok(userValidation.getUsersEmployee(employee, users));
         }
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace GardenCenter.Controllers
 
             if (!UserExists)
             {
-                return NotFound("ID in query does not match user being altered");
+                return NotFound("User was not found");
             }
 
             if (!validPassword)

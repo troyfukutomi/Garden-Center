@@ -85,7 +85,7 @@ namespace GardenCenter.Controllers
             if (_context.Customers == null)
             {
                 logger.Log("Customer database is empty");
-                return NotFound();
+                return NotFound("Database is empty");
             }
             var customer = await _context.Customers.FindAsync(id);
             var addresses = await _context.Addresses.ToListAsync();
@@ -93,7 +93,7 @@ namespace GardenCenter.Controllers
             if (customer == null)
             {
                 logger.Log("Customer was not found");
-                return NotFound();
+                return NotFound("No Customer with that Id has been found");
             }
 
             return Ok(customer);
