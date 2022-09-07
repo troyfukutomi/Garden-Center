@@ -173,7 +173,7 @@ namespace GardenCenter.Controllers
             bool validEmail = userValidation.validEmail(user.Email!);
             bool validPassword = userValidation.validPassword(user.Password!);
             bool uniqueEmail = userValidation.emailIsUnique(user, users);
-            bool UserExists = userValidation.UserExists(user.Id);
+            bool UserExists = userValidation.UserExists(user.Id, users);
 
             if (_context.Users == null)
             {
@@ -250,7 +250,7 @@ namespace GardenCenter.Controllers
             bool validEmail = userValidation.validEmail(user.Email!);
             bool validPassword = userValidation.validPassword(user.Password!);
             bool uniqueEmail = userValidation.emailIsUnique(user, users);
-            bool UserExists = userValidation.UserExists(user.Id);
+            bool UserExists = userValidation.UserExists(user.Id, users);
 
             if (!uniqueEmail)
             {

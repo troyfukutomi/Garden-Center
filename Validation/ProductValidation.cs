@@ -36,19 +36,19 @@ namespace GardenCenter.Validation
         {
             foreach (var p in products.ToList())
             {
-                if (sku != null && sku != p.Sku)
+                if (!string.IsNullOrEmpty(sku) && sku != p.Sku)
                 {
                     products.Remove(p);
                 }
-                if (type != null && type != p.Type)
+                if (!string.IsNullOrEmpty(type) && type != p.Type)
                 {
                     products.Remove(p);
                 }
-                if (name != null && name != p.Name)
+                if (!string.IsNullOrEmpty(name) && name != p.Name)
                 {
                     products.Remove(p);
                 }
-                if (manufacturer != null && manufacturer != p.Manufacturer)
+                if (!string.IsNullOrEmpty(manufacturer) && manufacturer != p.Manufacturer)
                 {
                     products.Remove(p);
                 }
@@ -104,7 +104,7 @@ namespace GardenCenter.Validation
         /// <returns>true if the sku number is one of a kind</returns>
         public bool uniqueSku(Product product, List<Product>products)
         {
-            foreach (var p in products)
+            foreach (var p in products.ToList())
             {
                 if (p.Sku == product.Sku && p.Id != product.Id)
                 {
@@ -119,10 +119,18 @@ namespace GardenCenter.Validation
         /// checks i the database that the product does exist.
         /// </summary>
         /// <param name="id">id used to check if product exists</param>
+        /// <param name="products">list of all products</param>
         /// <returns>true if the product exists</returns>
-        public bool productExists(int id)
+        public bool productExists(int id, List<Product> products)
         {
-            return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
+           foreach (var p in products)
+           {
+                if (id == p.Id)
+                {
+                    return true;
+                }
+           }
+            return false;
         }
     }
 }

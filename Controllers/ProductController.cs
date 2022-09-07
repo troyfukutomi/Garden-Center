@@ -114,7 +114,7 @@ namespace GardenCenter.Controllers
             bool uniqueSku = productValidation.uniqueSku(product, products);
             bool validPrice = productValidation.priceIsProperFormat(product.Price);
             bool matchingIds = productValidation.matchingIds(id, product);
-            bool productExists = productValidation.productExists(id);
+            bool productExists = productValidation.productExists(id, products);
             Regex priceRegex = new Regex(@"^[0-9]{0,}\.[0-9]{2}$");
 
             if (!productExists)

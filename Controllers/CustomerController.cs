@@ -128,7 +128,7 @@ namespace GardenCenter.Controllers
             bool validEmail = customerValidation.emailIsProperFormat(customer.Email!);
             bool validState = customerValidation.stateIsProperFormat(customer.Address!.State!);
             bool validZip = customerValidation.zipcodeIsProperFormat(customer.Address!.Zipcode!);
-            bool customerExists = customerValidation.customerExists(id);
+            bool customerExists = customerValidation.customerExists(id, customers);
 
             if (!customerExists)
             {

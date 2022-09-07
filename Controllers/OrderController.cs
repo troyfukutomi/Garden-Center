@@ -117,10 +117,11 @@ namespace GardenCenter.Controllers
             var customers = await _context.Customers.ToListAsync();
             var items = await _context.Items.ToListAsync();
             var products = await _context.Products.ToListAsync();
+            var orders = await _context.Orders.ToListAsync();
             bool matchingIds = orderValidation.matchingIds(id, order);
-            bool orderExists = orderValidation.orderExists(id);
-            bool customerExists = customerValidation.customerExists(order.CustomerId);
-            bool productExists = productValidation.productExists(order.Items!.ProductId);
+            bool orderExists = orderValidation.orderExists(id, orders);
+            bool customerExists = customerValidation.customerExists(order.CustomerId, customers);
+            bool productExists = productValidation.productExists(order.Items!.ProductId, products);
             bool validDate = orderValidation.validDate(order.Date!);
             bool validTotal = orderValidation.validTotal(order.OrderTotal);
             bool validQuantity = orderValidation.validQuantity(order.Items.Quantity);
@@ -204,8 +205,8 @@ namespace GardenCenter.Controllers
             var customers = await _context.Customers.ToListAsync();
             var items = await _context.Items.ToListAsync();
             var products = await _context.Products.ToListAsync();
-            bool customerExists = customerValidation.customerExists(order.CustomerId);
-            bool productExists = productValidation.productExists(order.Items!.ProductId);
+            bool customerExists = customerValidation.customerExists(order.CustomerId, customers);
+            bool productExists = productValidation.productExists(order.Items!.ProductId, products);
             bool validDate = orderValidation.validDate(order.Date!);
             bool validTotal = orderValidation.validTotal(order.OrderTotal);
             bool validQuantity = orderValidation.validQuantity(order.Items.Quantity);

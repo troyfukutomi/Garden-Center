@@ -41,19 +41,19 @@ namespace GardenCenter.Validation
         {
             foreach (var u in users.ToList())
             {
-                if (name != null && name != u.Name)
+                if (!string.IsNullOrEmpty(name) && name != u.Name)
                 {
                     users.Remove(u);
                 }
-                if (title != null && title != u.Title)
+                if (!string.IsNullOrEmpty(title) && title != u.Title)
                 {
                     users.Remove(u);
                 }
-                if (email != null && email != u.Email)
+                if (!string.IsNullOrEmpty(email) && email != u.Email)
                 {
                     users.Remove(u);
                 }
-                if (password!= null && password != u.Password)
+                if (!string.IsNullOrEmpty(password) && password != u.Password)
                 {
                     users.Remove(u);
                 }
@@ -179,10 +179,18 @@ namespace GardenCenter.Validation
         /// checks the databse to make sure the user does exist
         /// </summary>
         /// <param name="id">id of the user being checked</param>
+        /// <param name="users">list of all users</param>
         /// <returns>true if user exists</returns>
-        public bool UserExists(int id)
+        public bool UserExists(int id, List<User> users)
         {
-            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+            foreach (var u in users)
+            {
+                if (id == u.Id)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

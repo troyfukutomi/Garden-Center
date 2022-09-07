@@ -44,27 +44,27 @@ namespace GardenCenter.Validation
               
             foreach (var c in customers.ToList())
             {
-                if (name != null && name != c.Name)
+                if (!string.IsNullOrEmpty(name) && name != c.Name)
                 {
                     customers.Remove(c);  
                 }
-                if (email != null && email != c.Email)
+                if (!string.IsNullOrEmpty(email) && email != c.Email)
                 {
                     customers.Remove(c);
                 }
-                if (city != null && city != c.Address!.City)
+                if (!string.IsNullOrEmpty(city) && city != c.Address!.City)
                 {
                     customers.Remove(c);
                 }
-                if (state != null && state != c.Address!.State)
+                if (!string.IsNullOrEmpty(state) && state != c.Address!.State)
                 {
                     customers.Remove(c);
                 }
-                if (zipcode != null && zipcode != c.Address!.Zipcode)
+                if (!string.IsNullOrEmpty(zipcode) && zipcode != c.Address!.Zipcode)
                 {
                     customers.Remove(c);
                 }
-                if (street != null && street != c.Address!.Street)
+                if (!string.IsNullOrEmpty(street) && street != c.Address!.Street)
                 {
                     customers.Remove(c);
                 }
@@ -102,9 +102,9 @@ namespace GardenCenter.Validation
 
             foreach (var c in customers.ToList())
             {
-                if (c.Email == customer.Email && c.Id != customer.Id )
+                if (c.Email == customer.Email && c.Id != customer.Id)
                 {
-                    logger.Log("Error: Email is alradey taken");
+                    logger.Log("Error: Email is already taken");
                     return false;
                 }
             }
@@ -169,10 +169,18 @@ namespace GardenCenter.Validation
         /// making sure the customer exists in the database before updating
         /// </summary>
         /// <param name="id">id used to check if customer exists</param>
+        /// <param name="customers">list of all customers</param>
         /// <returns>true if the customer is found in the database</returns>
-        public bool customerExists(long id)
+        public bool customerExists(long id, List<Customer> customers)
         {
-            return (_context.Customers?.Any(e => e.Id == id)).GetValueOrDefault();
+            foreach (var c in customers)
+            {
+                if (id == c.Id)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

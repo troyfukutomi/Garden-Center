@@ -139,13 +139,21 @@ namespace GardenCenter.Validation
         }
           
         /// <summary>
-        /// checks to mkae sure order exists int he database
+        /// checks to make sure order exists in the database
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="orders">list of all orders</param>
         /// <returns>true if order exists</returns>
-        public bool orderExists(int id)
+        public bool orderExists(int id, List<Order> orders)
         {
-            return (_context.Orders?.Any(e => e.Id == id)).GetValueOrDefault();
+            foreach (var o in orders)
+            {
+                if (id == o.Id)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
