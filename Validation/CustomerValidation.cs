@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions; 
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,13 +40,13 @@ namespace GardenCenter.Validation
         /// <param name="customers">list of customers</param>
         /// <returns>list of customers</returns>
         public List<Customer> getCustomers(string? name, string? email, string? city, string? state, string? zipcode, string? street, List<Customer> customers)
-        {   
-              
+        {
+
             foreach (var c in customers.ToList())
             {
                 if (!string.IsNullOrEmpty(name) && name != c.Name)
                 {
-                    customers.Remove(c);  
+                    customers.Remove(c);
                 }
                 if (!string.IsNullOrEmpty(email) && email != c.Email)
                 {
@@ -84,9 +84,9 @@ namespace GardenCenter.Validation
             if (id == customer.Id)
             {
                 return true;
-            } else
+            }
+            else
             {
-                logger.Log("Error: Id's did not match");
                 return false;
             }
         }
@@ -97,14 +97,13 @@ namespace GardenCenter.Validation
         /// <param name="customer">customer being created or updated</param>
         /// <param name="customers">list of customers to check emails against</param>
         /// <returns>true if email is unique</returns>
-        public bool emailIsUnique(Customer customer,List<Customer> customers)
+        public bool emailIsUnique(Customer customer, List<Customer> customers)
         {
 
             foreach (var c in customers.ToList())
             {
                 if (c.Email == customer.Email && c.Id != customer.Id)
                 {
-                    logger.Log("Error: Email is already taken");
                     return false;
                 }
             }
@@ -122,9 +121,9 @@ namespace GardenCenter.Validation
             if (emailRegex.IsMatch(email))
             {
                 return true;
-            } else
+            }
+            else
             {
-                logger.Log("Error: Email is not in the proper format");
                 return false;
             }
         }
@@ -140,9 +139,9 @@ namespace GardenCenter.Validation
             if (zipcodeRegex.IsMatch(zipcode))
             {
                 return true;
-            } else 
+            }
+            else
             {
-                logger.Log("Error: Zipcode is not in the proper format");
                 return false;
             }
         }
@@ -158,9 +157,9 @@ namespace GardenCenter.Validation
             if (stateregex.IsMatch(state))
             {
                 return true;
-            } else
+            }
+            else
             {
-                logger.Log("Error: State is not a proper US state abbreviation");
                 return false;
             }
         }

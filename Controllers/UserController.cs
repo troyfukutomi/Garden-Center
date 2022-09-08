@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions; 
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -164,7 +164,7 @@ namespace GardenCenter.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> PutUser(int id, User user)
         {
-          
+
             //Validation checks, validation methods are located in the validation
             //folder and called here.
             UserValidation userValidation = new UserValidation(_context);
@@ -180,29 +180,34 @@ namespace GardenCenter.Controllers
                 logger.Log("User database is empty");
                 return NotFound();
             }
-            
+
             if (!matchingIds)
             {
+                logger.Log("Error: Id's did not match");
                 return BadRequest("ID in query does not match order being altered");
             }
 
             if (!UserExists)
             {
+                logger.Log("Error: User does not exist");
                 return NotFound("User was not found");
             }
 
             if (!validPassword)
             {
+                logger.Log("Error: Password must be 8 or more characters");
                 return BadRequest("Password must have 8 or more characters");
-            } 
+            }
 
             if (!validEmail)
             {
+                logger.Log("Error: Email is not in proper format");
                 return BadRequest("Email must be in proper email format");
-            } 
+            }
 
             if (!uniqueEmail)
             {
+                logger.Log("Error: Email has already been taken");
                 return Conflict("Email has already been taken, choose another email.");
             }
 
@@ -216,7 +221,7 @@ namespace GardenCenter.Controllers
                 return Ok();
             }
 
-            logger.Log("User being updated is invalid");    
+            logger.Log("User being updated is invalid");
             return BadRequest("User is invalid. Try again.");
         }
 
@@ -241,7 +246,7 @@ namespace GardenCenter.Controllers
                 logger.Log("User database is empty");
                 return NotFound();
             }
-            
+
             //Validation checks, validation methods are located in the validation
             //folder and called here.
             UserValidation userValidation = new UserValidation(_context);
@@ -254,18 +259,21 @@ namespace GardenCenter.Controllers
 
             if (!uniqueEmail)
             {
+                logger.Log("Error: Email has already been taken");
                 return Conflict("Email has already been taken, choose another email.");
             }
 
             if (!validPassword)
             {
+                logger.Log("Error: Password must be 8 or more characters");
                 return BadRequest("Password must have 8 or more characters");
-            } 
+            }
 
             if (!validEmail)
             {
+                logger.Log("Error: Email is not in proper format");
                 return BadRequest("Email must be in proper email format");
-            } 
+            }
 
             //all validation checks must pass before being posted
             if (uniqueEmail && validEmail && validPassword)
@@ -274,7 +282,7 @@ namespace GardenCenter.Controllers
                 await _context.SaveChangesAsync();
                 return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
             }
-            
+
             logger.Log("User being created is invalid");
             return BadRequest("User is invalid. Try again");
         }

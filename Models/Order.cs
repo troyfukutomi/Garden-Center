@@ -10,9 +10,9 @@ namespace GardenCenter.Models
         [ForeignKey("Customer")]
         public int CustomerId { get; set; }
 
-        public string? Date{ get; set; }
+        public string? Date { get; set; }
         public Item? Items { get; set; }
         public decimal OrderTotal { get; set; }
-    
+
     }
 }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GardenCenter.Models
 {
-    public class Item 
+    public class Item
     {
         [Key]
         public int Id { get; set; }

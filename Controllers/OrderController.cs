@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;  
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -48,11 +48,11 @@ namespace GardenCenter.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders(int customerId, string? date, decimal orderTotal, int productId, int quantity)
         {
-          if (_context.Orders == null)
-          {
+            if (_context.Orders == null)
+            {
                 logger.Log("Order database is empty");
                 return NotFound();
-          }
+            }
 
             OrderValidation orderValidation = new OrderValidation(_context);
             var orders = await _context.Orders.ToListAsync();
@@ -128,49 +128,55 @@ namespace GardenCenter.Controllers
 
             if (!matchingIds)
             {
+                logger.Log("Error: Id's did not match");
                 return BadRequest("ID in query does not match order being altered");
             }
 
             if (!orderExists)
             {
-                return NotFound("No orders with that Id exist. Try Again"); 
-            } 
-            
+                logger.Log("Error: Order does not exist");
+                return NotFound("No orders with that Id exist. Try Again");
+            }
+
             if (!customerExists)
             {
+                logger.Log("Error: Customer does not exist");
                 return BadRequest("Customer does not exist in database");
             }
 
-            if(!productExists)
+            if (!productExists)
             {
+                logger.Log("Error: Product does not exist");
                 return BadRequest("Product does not exist in database");
             }
 
             // Check that date is valid 
             if (!validDate)
             {
+                logger.Log("Error: Date does not match the proper yyyy-mm-dd format");
                 return BadRequest("Date does not match yyyy-MM-dd format");
-            } 
+            }
 
             // Check the decimal is 2 places 
             if (!validTotal)
             {
+                logger.Log("Error: Total does not have exactly 2 decimal places");
                 return BadRequest("Order total must have 2 decimal places");
             }
 
             if (!validQuantity)
             {
                 return BadRequest("Quantity must be a positive number.");
-            } 
+            }
 
             //all validation checks must pass before being updated
             if (matchingIds && orderExists && customerExists && productExists && validDate && validTotal && validQuantity)
             {
-                    _context.ChangeTracker.Clear();
-                    _context.Entry(order).State = EntityState.Modified;
-                    _context.Entry(order.Items).State = EntityState.Modified;
-                    await _context.SaveChangesAsync();
-                    return Ok();
+                _context.ChangeTracker.Clear();
+                _context.Entry(order).State = EntityState.Modified;
+                _context.Entry(order.Items).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return Ok();
             }
             logger.Log("Order is invalid being updated is invalid");
             return BadRequest("Order is invalid. Try again");
@@ -213,32 +219,37 @@ namespace GardenCenter.Controllers
             Regex dateRegex = new Regex(@"^\d{4}-((0[1-9])|(1[012]))-((0[1-9]|[12]\d)|3[01])$");
             Regex totalRegex = new Regex(@"^[0-9]{0,}\.[0-9]{2}$");
 
-        
+
             if (!validQuantity)
             {
+                logger.Log("Error: Quantity must be a positive number");
                 return BadRequest("Quantity must be a positive number.");
-            } 
+            }
 
             if (!customerExists)
             {
+                logger.Log("Error: Customer does not exist");
                 return BadRequest("Customer does not exist in database");
             }
-        // check if product exists in DB
+            // check if product exists in DB
 
-            if(!productExists)
+            if (!productExists)
             {
+                logger.Log("Error: Product does not exist");
                 return BadRequest("Product does not exist in database");
             }
 
-        // Check that date is valid 
+            // Check that date is valid 
             if (!validDate)
             {
+                logger.Log("Error: Date does not match the proper yyyy-mm-dd format");
                 return BadRequest("Date does not match yyyy-MM-dd format");
-            } 
+            }
 
-        //     check the decimal is 2 places 
+            //     check the decimal is 2 places 
             if (!validTotal)
             {
+                logger.Log("Error: Total does not have exactly 2 decimal places");
                 return BadRequest("Order total must have 2 decimal places");
             }
 

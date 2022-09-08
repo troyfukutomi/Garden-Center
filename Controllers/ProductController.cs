@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;  
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +10,7 @@ using GardenCenter.Models;
 using GardenCenter.Validation;
 
 namespace GardenCenter.Controllers
-{   
+{
     /// <summary>
     /// Controller for all products, includes get, get by an id, put, post, and delete methods
     /// </summary>
@@ -74,7 +74,7 @@ namespace GardenCenter.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-          if (_context.Products == null)
+            if (_context.Products == null)
             {
                 logger.Log("Product database is empty");
                 return NotFound();
@@ -119,26 +119,30 @@ namespace GardenCenter.Controllers
 
             if (!productExists)
             {
+                logger.Log("Error: Product does not exist");
                 return NotFound("No products with that Id exist. Try Again");
             }
 
             if (!matchingIds)
             {
+                logger.Log("Error: Id's did not match");
                 return BadRequest("ID in query does not match order being altered");
             }
 
             if (!uniqueSku)
             {
+                logger.Log("Error: Sku number has already been taken");
                 return Conflict("Sku has already been taken, use another sku number");
             }
-            
+
             if (!validPrice)
             {
+                logger.Log("Error: Price must have exactly 2 decimal places");
                 return BadRequest("Price must have 2 decimal places");
             }
 
             //all validation checks must pass before being updated
-            if (validPrice &&  uniqueSku && matchingIds)
+            if (validPrice && uniqueSku && matchingIds)
             {
                 _context.ChangeTracker.Clear();
                 _context.Entry(product).State = EntityState.Modified;
@@ -167,6 +171,7 @@ namespace GardenCenter.Controllers
         {
             if (_context.Products == null)
             {
+                logger.Log("Error: products is empty");
                 return Problem("Entity set 'DatabaseContext.Products'  is null.");
             }
 
@@ -180,11 +185,13 @@ namespace GardenCenter.Controllers
 
             if (!uniqueSku)
             {
+                logger.Log("Error: Sku number has already been taken");
                 return Conflict("Sku has already been taken, use another sku number");
             }
-            
+
             if (!validPrice)
             {
+                logger.Log("Error: Price must have exactly 2 decimal places");
                 return BadRequest("Price must have 2 decimal places");
             }
 

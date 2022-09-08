@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions; 
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -80,7 +80,6 @@ namespace GardenCenter.Validation
             }
             else
             {
-                logger.Log("Error: Id's did not match");
                 return false;
             }
         }
@@ -96,9 +95,9 @@ namespace GardenCenter.Validation
             if (dateRegex.IsMatch(date))
             {
                 return true;
-            } else
+            }
+            else
             {
-                logger.Log("Error: Date does not match the proper yyyy-mm-dd format");
                 return false;
             }
         }
@@ -114,9 +113,9 @@ namespace GardenCenter.Validation
             if (totalRegex.IsMatch(orderTotal.ToString()))
             {
                 return true;
-            } else
+            }
+            else
             {
-                logger.Log("Error: Total doe not have exactly 2 decimal places");
                 return false;
             }
         }
@@ -128,16 +127,16 @@ namespace GardenCenter.Validation
         /// <returns>true if quantity is a positive number</returns>
         public bool validQuantity(int quantity)
         {
-            if (quantity !<= 0)
+            if (quantity! <= 0)
             {
                 return false;
-            } else
+            }
+            else
             {
-                logger.Log("Error: Quantity must be a positive number");
                 return true;
             }
         }
-          
+
         /// <summary>
         /// checks to make sure order exists in the database
         /// </summary>

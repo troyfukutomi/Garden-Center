@@ -3,12 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace GardenCenter.Models
 {
-    public class DatabaseContext: DbContext
+    public class DatabaseContext : DbContext
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
-            : base(options) 
-            {
-            }
+            : base(options)
+        {
+        }
         public DbSet<Address> Addresses { get; set; } = null!;
         public DbSet<Customer> Customers { get; set; } = null!;
 

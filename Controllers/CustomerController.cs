@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions; 
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +17,7 @@ namespace GardenCenter.Controllers
     /// </summary>
     [Route("[controller]s")]
     [ApiController]
-    
+
     public class CustomerController : ControllerBase
     {
         private readonly DatabaseContext _context;
@@ -60,12 +60,12 @@ namespace GardenCenter.Controllers
             }
 
             CustomerValidation customerValidation = new CustomerValidation(_context);
-        
+
             // addresses is not directly used here but is required, without it  
             // all customers returned after a get request will have null addresses
             var addresses = await _context.Addresses.ToListAsync();
-            var customers = await _context.Customers.ToListAsync(); 
-            
+            var customers = await _context.Customers.ToListAsync();
+
             return Ok(customerValidation.getCustomers(name, email, city, state, zipcode, street, customers));
         }
 
@@ -89,7 +89,7 @@ namespace GardenCenter.Controllers
             }
             var customer = await _context.Customers.FindAsync(id);
             var addresses = await _context.Addresses.ToListAsync();
-            
+
             if (customer == null)
             {
                 logger.Log("Customer was not found");
@@ -124,7 +124,7 @@ namespace GardenCenter.Controllers
             Regex emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
             Regex zipcodeRegex = new Regex(@"^[0-9]{5}(?:-[0-9]{4})?$");
             bool matchingIds = customerValidation.matchingIds(id, customer);
-            bool uniqueEmail = customerValidation.emailIsUnique(customer,customers);
+            bool uniqueEmail = customerValidation.emailIsUnique(customer, customers);
             bool validEmail = customerValidation.emailIsProperFormat(customer.Email!);
             bool validState = customerValidation.stateIsProperFormat(customer.Address!.State!);
             bool validZip = customerValidation.zipcodeIsProperFormat(customer.Address!.Zipcode!);
@@ -132,33 +132,39 @@ namespace GardenCenter.Controllers
 
             if (!customerExists)
             {
-                return NotFound("No customers with that Id exist. Try Again"); 
-            } 
+                logger.Log("Customer was does not exist");
+                return NotFound("No customers with that Id exist. Try Again");
+            }
 
             if (!matchingIds)
             {
+                logger.Log("Error: Id's did not match");
                 return BadRequest("ID in query does not match order being altered");
             }
 
             if (!uniqueEmail)
             {
+                logger.Log("Error: Email is already taken");
                 return Conflict("Email has already been taken, choose another email.");
             }
 
             if (!validEmail)
             {
+                logger.Log("Error: Email is not in the proper format");
                 return BadRequest("Email must be in proper email format");
-            } 
+            }
 
             if (!validState)
             {
+                logger.Log("Error: State is not a proper US state abbreviation");
                 return BadRequest("Must be a valid US state abbreviation");
-            } 
+            }
 
             if (!validZip)
             {
+                logger.Log("Error: Zipcode is not in the proper format");
                 return BadRequest("Zipcode must have 5 digits or 9 digits. xxxxx or xxxxx-xxxx");
-            } 
+            }
 
             //all validation checks must pass before being updated
             if (validEmail && validState && validZip && uniqueEmail && matchingIds)
@@ -198,35 +204,39 @@ namespace GardenCenter.Controllers
             CustomerValidation customerValidation = new CustomerValidation(_context);
             var customers = await _context.Customers.ToListAsync();
             var addresses = await _context.Addresses.ToListAsync();
-            bool uniqueEmail = customerValidation.emailIsUnique(customer,customers);
+            bool uniqueEmail = customerValidation.emailIsUnique(customer, customers);
             bool validEmail = customerValidation.emailIsProperFormat(customer.Email!);
             bool validState = customerValidation.stateIsProperFormat(customer.Address!.State!);
             bool validZip = customerValidation.zipcodeIsProperFormat(customer.Address!.Zipcode!);
             Regex stateregex = new Regex(@"^(?-i:A[LKSZRAEP]|C[AOT]|D[EC]|F[LM]|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[ARW]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY])$");
             Regex emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
             Regex zipcodeRegex = new Regex(@"^[0-9]{5}(?:-[0-9]{4})?$");
-            
+
             if (!uniqueEmail)
             {
+                logger.Log("Error: Email is already taken");
                 return Conflict("Email has already been taken, choose another email.");
             }
 
             if (!validEmail)
             {
+                logger.Log("Error: Email is not in the proper format");
                 return BadRequest("Email must be in proper email format");
-            } 
+            }
 
             if (!validState)
             {
+                logger.Log("Error: State is not a proper US state abbreviation");
                 return BadRequest("Must be a valid US state abbreviation");
-            } 
+            }
 
             if (!validZip)
             {
+                logger.Log("Error: Zipcode is not in the proper format");
                 return BadRequest("Zipcode must have 5 digits or 9 digits. xxxxx or xxxxx-xxxx");
-            } 
+            }
 
-            
+
             if (uniqueEmail && validEmail && validState && validZip)
             {
                 _context.Customers.Add(customer);

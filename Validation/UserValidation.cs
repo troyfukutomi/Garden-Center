@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions; 
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -69,14 +69,14 @@ namespace GardenCenter.Validation
         /// <returns>list of users </returns>
         public List<User> getUsersAdmin(bool admin, List<User> users)
         {
-            
+
             foreach (var u in users.ToList())
             {
                 if (admin != u.Roles!.Admin)
                 {
                     users.Remove(u);
                 }
-            }  
+            }
 
             return users;
         }
@@ -89,14 +89,14 @@ namespace GardenCenter.Validation
         /// <returns>list of users</returns>
         public List<User> getUsersEmployee(bool employee, List<User> users)
         {
-            
+
             foreach (var u in users.ToList())
             {
                 if (employee != u.Roles!.Employee)
                 {
                     users.Remove(u);
                 }
-            }  
+            }
 
             return users;
         }
@@ -111,9 +111,9 @@ namespace GardenCenter.Validation
             if (password.Length >= 8)
             {
                 return true;
-            } else 
+            }
+            else
             {
-                logger.Log("Error: Password must be 8 or more characters");
                 return false;
             }
         }
@@ -129,27 +129,26 @@ namespace GardenCenter.Validation
             if (emailRegex.IsMatch(email))
             {
                 return true;
-            } else
+            }
+            else
             {
-                logger.Log("Error: Email is not in proper format");
                 return false;
             }
         }
-        
+
         /// <summary>
         /// checks to make sure there are no duplicate emails in the database
         /// </summary>
         /// <param name="user">user being updated</param>
         /// <param name="users">list of users top check against</param>
         /// <returns>true if email is one of a kind</returns>
-        public bool emailIsUnique(User user,List<User> users)
+        public bool emailIsUnique(User user, List<User> users)
         {
 
             foreach (var c in users.ToList())
             {
                 if (c.Email == user.Email && c.Id != user.Id)
                 {
-                    logger.Log("Error: Email has already been taken");
                     return false;
                 }
             }
@@ -170,7 +169,6 @@ namespace GardenCenter.Validation
             }
             else
             {
-                logger.Log("Error: Id's did not match");
                 return false;
             }
         }

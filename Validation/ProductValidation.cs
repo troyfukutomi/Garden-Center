@@ -71,9 +71,9 @@ namespace GardenCenter.Validation
             if (id == product.Id)
             {
                 return true;
-            } else
+            }
+            else
             {
-                logger.Log("Error: Id's did not match");
                 return false;
             }
         }
@@ -83,15 +83,16 @@ namespace GardenCenter.Validation
         /// </summary>
         /// <param name="price">price beingn checked</param>
         /// <returns>true if price has 2 decimal places</returns>
-        public bool priceIsProperFormat(decimal price){
+        public bool priceIsProperFormat(decimal price)
+        {
 
             Regex priceRegex = new Regex(@"^[0-9]{0,}\.[0-9]{2}$");
             if (priceRegex.IsMatch(price.ToString()))
             {
                 return true;
-            } else
+            }
+            else
             {
-                logger.Log("Error: Price must have exactly 2 decimal places");
                 return false;
             }
         }
@@ -102,13 +103,13 @@ namespace GardenCenter.Validation
         /// <param name="product">product being checked</param>
         /// <param name="products">lis tof products in the database to check against</param>
         /// <returns>true if the sku number is one of a kind</returns>
-        public bool uniqueSku(Product product, List<Product>products)
+        public bool uniqueSku(Product product, List<Product> products)
         {
             foreach (var p in products.ToList())
             {
                 if (p.Sku == product.Sku && p.Id != product.Id)
                 {
-                    logger.Log("Error: Sku number has already been taken");
+
                     return false;
                 }
             }
@@ -123,13 +124,13 @@ namespace GardenCenter.Validation
         /// <returns>true if the product exists</returns>
         public bool productExists(int id, List<Product> products)
         {
-           foreach (var p in products)
-           {
+            foreach (var p in products)
+            {
                 if (id == p.Id)
                 {
                     return true;
                 }
-           }
+            }
             return false;
         }
     }
