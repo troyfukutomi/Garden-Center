@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fIq+CmGLSf/NzUbP8NAlv4SEtCxiq0FwqnUx1d8uMNaou/IqSdSdSNGX926Aaip8gTiLxzc5i6PqYvDJDihUIQ==",
+  "dgSpecHash": "llhSn4pyAICBVIiEw5B1Cq/AYJ6fpxTDvGN3jl/mNTLtUE1gnW07gFtm+CVyqmvVKLQTr/grLeogHaCrHG+jwQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Troy\\Code\\dotNET\\GardenCenter\\GardenCenter.csproj",
+  "projectFilePath": "c:\\Users\\Troy\\Code\\dotNET\\GardenCenter2\\GardenCenter.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Troy\\.nuget\\packages\\coverlet.collector\\3.1.0\\coverlet.collector.3.1.0.nupkg.sha512",
     "C:\\Users\\Troy\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
